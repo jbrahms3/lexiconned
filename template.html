@@ -1,3 +1,5 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Longbourn Lexicon</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -127,6 +129,45 @@
 
   @media (max-width: 860px) {
     .layout { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 640px) {
+    .page { padding: 1.5rem 1rem 6rem; }
+
+    header.masthead { padding-bottom: 1.25rem; margin-bottom: 1.5rem; }
+    .kicker { letter-spacing: 0.16em; }
+    .tagline { font-size: 1rem; }
+
+    .layout { gap: 1.1rem; }
+    .panel-body, .desk-header, .wordbank-panel { padding-left: 1rem; padding-right: 1rem; }
+    .write-area { padding: 1rem; }
+    .desk-header { padding: 0.85rem 1rem; gap: 0.6rem; }
+    .desk-header-right { width: 100%; justify-content: space-between; }
+
+    .mode-option { padding: 0.5rem 0.6rem; }
+    .chapter-grid { grid-template-columns: repeat(auto-fill, minmax(34px, 1fr)); gap: 0.35rem; }
+    .chip { padding: 0.55rem 0; font-size: 0.74rem; }
+
+    .highlight-layer, textarea.input-layer { font-size: 1.08rem; line-height: 1.65; }
+
+    .desk-footer { padding: 0.75rem 1rem; }
+    .stats { gap: 1rem; font-size: 0.72rem; }
+
+    .wordbank-panel { padding: 1rem 1rem 1.25rem; margin-top: 1.25rem; }
+    .wordbank-toolbar { margin: -1rem -1rem 1rem; padding: 0.85rem 1rem; flex-wrap: wrap; }
+    .wordbank-heading { width: 100%; }
+    .wordbank-search { flex-basis: 100%; max-width: none; }
+    .wordbank-total { margin-left: 0; }
+    .wordbank-categories { gap: 1.1rem; }
+    .word-bubble { padding: 0.3rem 0.7rem; font-size: 0.88rem; }
+
+    .float-composer { width: 94vw; bottom: 0.7rem; padding: 0.6rem 0.75rem 0.7rem; }
+    .float-composer-header { margin-bottom: 0.3rem; }
+    .float-input { font-size: 1rem; min-height: 2.4rem; }
+
+    .suggest-dropdown { max-width: 80vw; }
+
+    footer.colophon { padding: 0 0.5rem; line-height: 1.6; }
   }
 
   .panel {
