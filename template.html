@@ -1,0 +1,1294 @@
+<title>Longbourn Lexicon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --paper: #E7E1CE;
+    --paper-raised: #F1ECDD;
+    --paper-shadow: #D5CCAE;
+    --rule: #C9BF9C;
+    --ink: #2A2620;
+    --ink-soft: #6B6350;
+    --ink-faint: #948C74;
+    --accent: #8A6A1E;
+    --accent-strong: #6B4E10;
+    --flag: #A23E48;
+    --flag-bg: rgba(162, 62, 72, 0.10);
+    --flag-underline: rgba(162, 62, 72, 0.55);
+    --focus-ring: #8A6A1E;
+    --chip-bg: #DED5B4;
+    --chip-bg-active: #6B4E10;
+    --chip-fg-active: #F1ECDD;
+    --shadow-color: 34, 28, 12;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #1C1812;
+      --paper-raised: #262019;
+      --paper-shadow: #100D09;
+      --rule: #453B2C;
+      --ink: #EAE1C9;
+      --ink-soft: #B7AB8B;
+      --ink-faint: #837A63;
+      --accent: #D3AE47;
+      --accent-strong: #E9C665;
+      --flag: #E28A7D;
+      --flag-bg: rgba(226, 138, 125, 0.12);
+      --flag-underline: rgba(226, 138, 125, 0.6);
+      --focus-ring: #D3AE47;
+      --chip-bg: #33291A;
+      --chip-bg-active: #D3AE47;
+      --chip-fg-active: #201A0F;
+      --shadow-color: 0, 0, 0;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper: #1C1812;
+    --paper-raised: #262019;
+    --paper-shadow: #100D09;
+    --rule: #453B2C;
+    --ink: #EAE1C9;
+    --ink-soft: #B7AB8B;
+    --ink-faint: #837A63;
+    --accent: #D3AE47;
+    --accent-strong: #E9C665;
+    --flag: #E28A7D;
+    --flag-bg: rgba(226, 138, 125, 0.12);
+    --flag-underline: rgba(226, 138, 125, 0.6);
+    --focus-ring: #D3AE47;
+    --chip-bg: #33291A;
+    --chip-bg-active: #D3AE47;
+    --chip-fg-active: #201A0F;
+    --shadow-color: 0, 0, 0;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper-shadow);
+    color: var(--ink);
+    font-family: "EB Garamond", Georgia, "Times New Roman", serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+
+  header.masthead {
+    text-align: center;
+    padding: 0 0 1.75rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .kicker {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 0.6rem;
+  }
+
+  h1 {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-weight: 700;
+    font-size: clamp(2.4rem, 5vw, 3.6rem);
+    letter-spacing: 0.01em;
+    margin: 0 0 0.5rem;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+
+  .tagline {
+    font-style: italic;
+    font-size: 1.08rem;
+    color: var(--ink-soft);
+    max-width: 42rem;
+    margin: 0 auto;
+    text-wrap: balance;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 1.75rem;
+    align-items: start;
+  }
+
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: 1fr; }
+  }
+
+  .panel {
+    background: var(--paper-raised);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    box-shadow: 0 1px 2px rgba(var(--shadow-color), 0.06);
+  }
+
+  .panel-header {
+    padding: 1rem 1.25rem 0.85rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .panel-title {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 600;
+    font-size: 1.3rem;
+    margin: 0;
+  }
+
+  .panel-body { padding: 1.1rem 1.25rem 1.25rem; }
+
+  fieldset {
+    border: none;
+    margin: 0 0 1.1rem;
+    padding: 0;
+  }
+
+  legend {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.66rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 0.55rem;
+    padding: 0;
+  }
+
+  .mode-choice {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .mode-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.55rem 0.65rem;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    cursor: pointer;
+    background: transparent;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+
+  .mode-option:hover { background: rgba(var(--shadow-color), 0.04); }
+
+  .mode-option input {
+    margin-top: 0.2rem;
+    accent-color: var(--accent-strong);
+  }
+
+  .mode-option .label {
+    font-size: 0.95rem;
+    line-height: 1.35;
+  }
+
+  .mode-option .label strong {
+    display: block;
+    font-family: "Cormorant Garamond", serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+  }
+
+  .mode-option .label span {
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+  }
+
+  .chapter-block { display: none; }
+  .chapter-block.active { display: block; }
+
+  .chapter-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .text-btn {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    background: none;
+    border: 1px solid var(--rule);
+    color: var(--ink-soft);
+    padding: 0.32rem 0.6rem;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  .text-btn:hover { border-color: var(--accent); color: var(--accent-strong); }
+  .text-btn:focus-visible, .mode-option:has(input:focus-visible), input:focus-visible, textarea:focus-visible, .chip:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  .chapter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(38px, 1fr));
+    gap: 0.4rem;
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 0.2rem;
+  }
+
+  .chip {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.78rem;
+    text-align: center;
+    padding: 0.4rem 0;
+    border-radius: 3px;
+    background: var(--chip-bg);
+    color: var(--ink-soft);
+    cursor: pointer;
+    border: 1px solid transparent;
+    user-select: none;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .chip.active {
+    background: var(--chip-bg-active);
+    color: var(--chip-fg-active);
+    font-weight: 600;
+  }
+
+  .chapter-summary {
+    margin-top: 0.7rem;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.72rem;
+    color: var(--ink-faint);
+  }
+
+  .desk {
+    background: var(--paper-raised);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    box-shadow: 0 2px 10px rgba(var(--shadow-color), 0.08);
+    overflow: hidden;
+  }
+
+  .desk-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 1rem 1.4rem;
+    border-bottom: 1px solid var(--rule);
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .desk-header h2 {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 600;
+    font-size: 1.4rem;
+    margin: 0;
+  }
+
+  .desk-header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+  }
+
+  .desk-source {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.72rem;
+    color: var(--ink-faint);
+    letter-spacing: 0.03em;
+  }
+
+  .wordbank-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .wordbank-switch-label {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .wordbank-switch-track {
+    position: relative;
+    width: 34px;
+    height: 19px;
+    border-radius: 999px;
+    background: var(--chip-bg);
+    border: 1px solid var(--rule);
+    transition: background 0.15s ease;
+    flex-shrink: 0;
+  }
+
+  .wordbank-switch-track::after {
+    content: '';
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: var(--paper-raised);
+    box-shadow: 0 1px 2px rgba(var(--shadow-color), 0.3);
+    transition: transform 0.15s ease;
+  }
+
+  .wordbank-switch input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+  }
+
+  .wordbank-switch input:checked + .wordbank-switch-track {
+    background: var(--accent-strong);
+    border-color: var(--accent-strong);
+  }
+
+  .wordbank-switch input:checked + .wordbank-switch-track::after {
+    transform: translateX(15px);
+  }
+
+  .wordbank-switch input:focus-visible + .wordbank-switch-track {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  .wordbank-panel {
+    margin-top: 1.75rem;
+    padding: 1.25rem 1.4rem 1.6rem;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    background: var(--paper-raised);
+    box-shadow: 0 1px 2px rgba(var(--shadow-color), 0.06);
+  }
+
+  .wordbank-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: -1.25rem -1.4rem 1.1rem;
+    padding: 1rem 1.4rem;
+    flex-wrap: wrap;
+    background: var(--paper-raised);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .wordbank-heading {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 600;
+    font-size: 1.4rem;
+    margin: 0;
+    margin-right: 0.3rem;
+  }
+
+  .wordbank-search {
+    flex: 1 1 240px;
+    max-width: 380px;
+    font-family: "EB Garamond", serif;
+    font-size: 1rem;
+    font-style: italic;
+    padding: 0.4rem 0.7rem;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    background: var(--paper);
+    color: var(--ink);
+  }
+
+  .wordbank-search::placeholder { color: var(--ink-faint); }
+
+  .wordbank-total {
+    margin-left: auto;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    color: var(--ink-faint);
+    white-space: nowrap;
+  }
+
+  .wordbank-categories {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+  }
+
+  .wordbank-category {
+    min-width: 0;
+  }
+
+  .wordbank-category.is-empty { display: none; }
+
+  .wordbank-category-header {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.6rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .wordbank-category-name {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+  }
+
+  .wordbank-category-count {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.7rem;
+    color: var(--ink-faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .word-bubble-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 0.4rem 0.4rem;
+  }
+
+  .word-bubble {
+    font-family: "EB Garamond", serif;
+    font-size: 0.92rem;
+    padding: 0.2rem 0.62rem;
+    border-radius: 999px;
+    background: var(--chip-bg);
+    color: var(--ink);
+    border: 1px solid transparent;
+    cursor: pointer;
+    line-height: 1.4;
+  }
+
+  .word-bubble:hover,
+  .word-bubble:focus-visible {
+    background: var(--chip-bg-active);
+    color: var(--chip-fg-active);
+  }
+
+  .word-bubble.is-hidden { display: none; }
+
+  .wordbank-empty {
+    font-size: 0.9rem;
+    font-style: italic;
+    color: var(--ink-faint);
+    padding: 0.5rem 0.1rem 0;
+  }
+
+  .write-area {
+    position: relative;
+    padding: 1.4rem;
+  }
+
+  .write-surface {
+    position: relative;
+    min-height: 320px;
+  }
+
+  .mirror {
+    position: absolute;
+    top: 0;
+    left: -9999px;
+    visibility: hidden;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    height: auto;
+  }
+
+  .float-composer {
+    position: fixed;
+    left: 50%;
+    bottom: 1.1rem;
+    width: min(700px, 92vw);
+    transform: translateX(-50%) translateY(14px);
+    background: var(--paper-raised);
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    box-shadow: 0 12px 32px rgba(var(--shadow-color), 0.3);
+    padding: 0.7rem 0.9rem 0.85rem;
+    z-index: 40;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+
+  .float-composer.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+  }
+
+  .float-composer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .float-composer-label {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .float-stats {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.66rem;
+    color: var(--ink-faint);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .float-stats .is-flagged { color: var(--flag); }
+
+  .float-input {
+    display: block;
+    width: 100%;
+    min-height: 2.7rem;
+    max-height: 7rem;
+    resize: vertical;
+    font-family: "EB Garamond", Georgia, serif;
+    font-size: 1.05rem;
+    line-height: 1.5;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    background: var(--paper);
+    color: var(--ink);
+  }
+
+  .float-input::placeholder { color: var(--ink-faint); font-style: italic; }
+
+  .suggest-dropdown {
+    position: absolute;
+    z-index: 20;
+    display: none;
+    min-width: 150px;
+    max-width: 260px;
+    max-height: 224px;
+    overflow-y: auto;
+    background: var(--paper-raised);
+    border: 1px solid var(--accent);
+    border-radius: 3px;
+    box-shadow: 0 6px 18px rgba(var(--shadow-color), 0.22);
+  }
+
+  .suggest-dropdown.open { display: block; }
+
+  .suggest-item {
+    display: flex;
+    align-items: baseline;
+    gap: 0.05rem;
+    padding: 0.32rem 0.7rem;
+    font-family: "EB Garamond", serif;
+    font-size: 1.05rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .suggest-item .rest { color: var(--ink-faint); }
+
+  .suggest-item.active,
+  .suggest-item:hover {
+    background: var(--chip-bg-active);
+    color: var(--chip-fg-active);
+  }
+
+  .suggest-item.active .rest,
+  .suggest-item:hover .rest { color: inherit; opacity: 0.72; }
+
+  .suggest-hint {
+    padding: 0.3rem 0.7rem;
+    border-top: 1px solid var(--rule);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .highlight-layer, textarea.input-layer {
+    margin: 0;
+    padding: 0;
+    border: none;
+    width: 100%;
+    min-height: 320px;
+    font-family: "EB Garamond", Georgia, serif;
+    font-size: 1.22rem;
+    line-height: 1.75;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  .highlight-layer {
+    position: absolute;
+    inset: 0;
+    color: transparent;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .highlight-layer mark {
+    background: var(--flag-bg);
+    color: transparent;
+    border-radius: 2px;
+    text-decoration: underline wavy var(--flag-underline);
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 3px;
+  }
+
+  textarea.input-layer {
+    position: relative;
+    display: block;
+    background: transparent;
+    color: var(--ink);
+    caret-color: var(--accent-strong);
+    resize: vertical;
+  }
+
+  textarea.input-layer::placeholder { color: var(--ink-faint); font-style: italic; }
+
+  .desk-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 0.85rem 1.4rem;
+    border-top: 1px solid var(--rule);
+    background: rgba(var(--shadow-color), 0.03);
+  }
+
+  .stats {
+    display: flex;
+    gap: 1.4rem;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stats b {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .stats .flagged-count b { color: var(--flag); }
+
+  .seal {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    border: 1px solid var(--rule);
+  }
+
+  .seal.clean { color: var(--accent-strong); border-color: var(--accent); }
+  .seal.dirty { color: var(--flag); border-color: var(--flag); }
+
+  .flagged-panel {
+    margin-top: 1.4rem;
+  }
+
+  .flagged-panel h3 {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 0.6rem;
+    font-weight: 500;
+  }
+
+  .flagged-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .flagged-words span {
+    font-family: "EB Garamond", serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--flag);
+    background: var(--flag-bg);
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+  }
+
+  .empty-note {
+    font-size: 0.9rem;
+    color: var(--ink-faint);
+    font-style: italic;
+  }
+
+  footer.colophon {
+    text-align: center;
+    margin-top: 2.5rem;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .mode-option, .text-btn, .chip { transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease; }
+  }
+</style>
+
+<div class="page">
+  <header class="masthead">
+    <p class="kicker">A Vocabulary Confined to Longbourn</p>
+    <h1>Longbourn Lexicon</h1>
+    <p class="tagline">Write only in words Jane Austen herself set down in <em>Pride and Prejudice</em> &mdash; the whole novel, or a single chapter's worth of civility.</p>
+  </header>
+
+  <div class="layout">
+    <aside class="panel">
+      <div class="panel-header">
+        <p class="panel-title">Source Material</p>
+      </div>
+      <div class="panel-body">
+        <fieldset>
+          <legend>Vocabulary drawn from</legend>
+          <div class="mode-choice" role="radiogroup" aria-label="Vocabulary source">
+            <label class="mode-option">
+              <input type="radio" name="mode" value="book" checked>
+              <span class="label"><strong>The entire novel</strong><span>All 61 chapters, ~6,400 distinct words</span></span>
+            </label>
+            <label class="mode-option">
+              <input type="radio" name="mode" value="chapters">
+              <span class="label"><strong>Chosen chapters</strong><span>Restrict to only the chapters you pick</span></span>
+            </label>
+          </div>
+        </fieldset>
+
+        <div class="chapter-block" id="chapterBlock">
+          <div class="chapter-actions">
+            <button type="button" class="text-btn" id="selectAll">All</button>
+            <button type="button" class="text-btn" id="selectNone">None</button>
+          </div>
+          <div class="chapter-grid" id="chapterGrid" role="group" aria-label="Chapters"></div>
+          <p class="chapter-summary" id="chapterSummary">0 chapters selected &middot; 0 words available</p>
+        </div>
+      </div>
+    </aside>
+
+    <main class="desk">
+      <div class="desk-header">
+        <h2>Your Composition</h2>
+        <div class="desk-header-right">
+          <label class="wordbank-switch">
+            <input type="checkbox" id="wordBankToggle">
+            <span class="wordbank-switch-track" aria-hidden="true"></span>
+            <span class="wordbank-switch-label">Word Bank</span>
+          </label>
+          <span class="desk-source" id="sourceLabel">SOURCE: ENTIRE NOVEL</span>
+        </div>
+      </div>
+      <div class="write-area">
+        <div class="write-surface">
+          <div class="highlight-layer" id="highlightLayer" aria-hidden="true"></div>
+          <textarea class="input-layer" id="inputArea" spellcheck="false" placeholder="Begin writing here, in words Miss Austen would recognise&hellip;" role="combobox" aria-expanded="false" aria-autocomplete="list" aria-controls="suggestDropdown"></textarea>
+          <div class="mirror" id="mirrorDiv" aria-hidden="true"></div>
+          <div class="suggest-dropdown" id="suggestDropdown" role="listbox"></div>
+        </div>
+        <div class="flagged-panel" id="flaggedPanel">
+          <h3>Words not found in the selected text</h3>
+          <p class="empty-note" id="flaggedEmpty">None yet &mdash; every word you've written belongs to Austen's Longbourn.</p>
+          <div class="flagged-words" id="flaggedWords"></div>
+        </div>
+      </div>
+      <div class="desk-footer">
+        <div class="stats">
+          <span>Words written: <b id="statTotal">0</b></span>
+          <span class="flagged-count">Flagged: <b id="statFlagged">0</b></span>
+        </div>
+        <span class="seal clean" id="sealBadge">ALL WORDS ATTESTED</span>
+      </div>
+    </main>
+  </div>
+
+  <div class="float-composer" id="floatComposer">
+    <div class="float-composer-header">
+      <span class="float-composer-label">Your Composition</span>
+      <span class="float-stats" id="floatStats">0 words &middot; 0 flagged</span>
+    </div>
+    <textarea class="float-input" id="floatInput" spellcheck="false" placeholder="Begin writing here, in words Miss Austen would recognise&hellip;"></textarea>
+  </div>
+
+  <section class="wordbank-panel" id="wordBankPanel" hidden>
+    <div class="wordbank-toolbar">
+      <h2 class="wordbank-heading">Word Bank</h2>
+      <input type="text" class="wordbank-search" id="wordBankFilter" placeholder="Filter the word bank&hellip;" aria-label="Filter word bank">
+      <span class="wordbank-total" id="wordBankTotal"></span>
+    </div>
+    <div class="wordbank-categories" id="wordBankCategories"></div>
+  </section>
+
+  <footer class="colophon">TEXT SOURCE: PRIDE AND PREJUDICE BY JANE AUSTEN (1813) &middot; PUBLIC DOMAIN, PROJECT GUTENBERG EBOOK 1342 &middot; VOCABULARY CHECK ONLY, NO PASSAGES REPRODUCED</footer>
+</div>
+
+<script id="ppData" type="application/json">__PP_DATA__</script>
+
+<script>
+(function () {
+  const data = JSON.parse(document.getElementById('ppData').textContent);
+  const bookWords = new Set(data.book);
+  const chapters = data.chapters; // [{num, words: [...] }]
+  const posMap = data.pos || {};
+
+  const CATEGORY_ORDER = ['noun', 'proper', 'verb', 'adjective', 'adverb', 'pronoun', 'determiner', 'preposition', 'conjunction', 'interjection', 'number', 'other'];
+  const CATEGORY_LABELS = {
+    noun: 'Nouns', proper: 'Proper Nouns', verb: 'Verbs', adjective: 'Adjectives',
+    adverb: 'Adverbs', pronoun: 'Pronouns', determiner: 'Determiners', preposition: 'Prepositions',
+    conjunction: 'Conjunctions', interjection: 'Interjections', number: 'Numbers', other: 'Other'
+  };
+
+  const chapterGrid = document.getElementById('chapterGrid');
+  const chapterBlock = document.getElementById('chapterBlock');
+  const chapterSummary = document.getElementById('chapterSummary');
+  const sourceLabel = document.getElementById('sourceLabel');
+  const inputArea = document.getElementById('inputArea');
+  const highlightLayer = document.getElementById('highlightLayer');
+  const statTotal = document.getElementById('statTotal');
+  const statFlagged = document.getElementById('statFlagged');
+  const sealBadge = document.getElementById('sealBadge');
+  const flaggedWordsEl = document.getElementById('flaggedWords');
+  const flaggedEmpty = document.getElementById('flaggedEmpty');
+
+  const selectedChapters = new Set();
+  let mode = 'book';
+  let activeSet = bookWords;
+  let activeWordsArray = Array.from(bookWords);
+
+  const wordBankToggle = document.getElementById('wordBankToggle');
+  const wordBankPanel = document.getElementById('wordBankPanel');
+  const wordBankCategories = document.getElementById('wordBankCategories');
+  const wordBankFilter = document.getElementById('wordBankFilter');
+  const wordBankTotal = document.getElementById('wordBankTotal');
+
+  const mirrorDiv = document.getElementById('mirrorDiv');
+  const suggestDropdown = document.getElementById('suggestDropdown');
+  const writeSurface = document.querySelector('.write-surface');
+  let currentMatches = [];
+  let currentRange = null;
+  let activeIndex = 0;
+
+  const floatComposer = document.getElementById('floatComposer');
+  const floatInput = document.getElementById('floatInput');
+  const floatStats = document.getElementById('floatStats');
+
+  // Build chapter chips
+  chapters.forEach(ch => {
+    const chip = document.createElement('div');
+    chip.className = 'chip';
+    chip.textContent = ch.num;
+    chip.tabIndex = 0;
+    chip.setAttribute('role', 'checkbox');
+    chip.setAttribute('aria-checked', 'false');
+    chip.dataset.num = ch.num;
+    chip.addEventListener('click', () => toggleChapter(ch.num, chip));
+    chip.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleChapter(ch.num, chip); }
+    });
+    chapterGrid.appendChild(chip);
+  });
+
+  function toggleChapter(num, chip) {
+    if (selectedChapters.has(num)) {
+      selectedChapters.delete(num);
+      chip.classList.remove('active');
+      chip.setAttribute('aria-checked', 'false');
+    } else {
+      selectedChapters.add(num);
+      chip.classList.add('active');
+      chip.setAttribute('aria-checked', 'true');
+    }
+    rebuildActiveSet();
+  }
+
+  document.getElementById('selectAll').addEventListener('click', () => {
+    chapters.forEach(ch => selectedChapters.add(ch.num));
+    Array.from(chapterGrid.children).forEach(c => { c.classList.add('active'); c.setAttribute('aria-checked', 'true'); });
+    rebuildActiveSet();
+  });
+
+  document.getElementById('selectNone').addEventListener('click', () => {
+    selectedChapters.clear();
+    Array.from(chapterGrid.children).forEach(c => { c.classList.remove('active'); c.setAttribute('aria-checked', 'false'); });
+    rebuildActiveSet();
+  });
+
+  document.querySelectorAll('input[name="mode"]').forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      mode = e.target.value;
+      chapterBlock.classList.toggle('active', mode === 'chapters');
+      sourceLabel.textContent = mode === 'book' ? 'SOURCE: ENTIRE NOVEL' : 'SOURCE: SELECTED CHAPTERS';
+      rebuildActiveSet();
+    });
+  });
+
+  function rebuildActiveSet() {
+    if (mode === 'book') {
+      activeSet = bookWords;
+    } else {
+      const s = new Set();
+      chapters.forEach(ch => {
+        if (selectedChapters.has(ch.num)) ch.words.forEach(w => s.add(w));
+      });
+      activeSet = s;
+      chapterSummary.textContent = selectedChapters.size + ' chapter' + (selectedChapters.size === 1 ? '' : 's') + ' selected · ' + s.size.toLocaleString() + ' words available';
+    }
+    activeWordsArray = Array.from(activeSet);
+    closeSuggestions();
+    validate();
+    if (!wordBankPanel.hidden) buildWordBank();
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  const wordRe = /[A-Za-z]+(?:['’-][A-Za-z]+)*/g;
+
+  function validate() {
+    const text = inputArea.value;
+    let match;
+    wordRe.lastIndex = 0;
+    let lastIndex = 0;
+    let html = '';
+    let total = 0;
+    const flaggedSet = new Set();
+
+    while ((match = wordRe.exec(text))) {
+      const raw = match[0];
+      const norm = raw.toLowerCase().replace(/’/g, "'").replace(/^['-]+|['-]+$/g, '');
+      total++;
+      html += escapeHtml(text.slice(lastIndex, match.index));
+      if (norm.length > 0 && !activeSet.has(norm)) {
+        html += '<mark>' + escapeHtml(raw) + '</mark>';
+        flaggedSet.add(norm);
+      } else {
+        html += escapeHtml(raw);
+      }
+      lastIndex = match.index + raw.length;
+    }
+    html += escapeHtml(text.slice(lastIndex));
+    // trailing newline padding so the overlay never clips short of the textarea
+    highlightLayer.innerHTML = html + (text.endsWith('\n') ? '&nbsp;' : '');
+
+    statTotal.textContent = total.toLocaleString();
+    statFlagged.textContent = flaggedSet.size.toLocaleString();
+
+    if (floatStats) {
+      floatStats.innerHTML = total.toLocaleString() + ' word' + (total === 1 ? '' : 's')
+        + (flaggedSet.size > 0 ? ' &middot; <span class="is-flagged">' + flaggedSet.size.toLocaleString() + ' flagged</span>' : ' &middot; all attested');
+    }
+
+    if (flaggedSet.size === 0) {
+      sealBadge.textContent = total === 0 ? 'ALL WORDS ATTESTED' : 'ALL WORDS ATTESTED';
+      sealBadge.classList.remove('dirty');
+      sealBadge.classList.add('clean');
+      flaggedEmpty.style.display = 'block';
+      flaggedWordsEl.innerHTML = '';
+    } else {
+      sealBadge.textContent = flaggedSet.size + ' WORD' + (flaggedSet.size === 1 ? '' : 'S') + ' UNATTESTED';
+      sealBadge.classList.remove('clean');
+      sealBadge.classList.add('dirty');
+      flaggedEmpty.style.display = 'none';
+      flaggedWordsEl.innerHTML = Array.from(flaggedSet).sort().map(w => '<span>' + escapeHtml(w) + '</span>').join('');
+    }
+  }
+
+  // ---- Word Bank ----
+
+  function getActiveEditor() {
+    return (floatComposer.classList.contains('visible')) ? floatInput : inputArea;
+  }
+
+  function insertWordAtCursor(word) {
+    const editor = getActiveEditor();
+    const text = editor.value;
+    const hasFocus = document.activeElement === editor;
+    let start = hasFocus ? editor.selectionStart : text.length;
+    let end = hasFocus ? editor.selectionEnd : text.length;
+    const before = text.slice(0, start);
+    const after = text.slice(end);
+    let insert = word;
+    if (before.length > 0 && !/\s$/.test(before)) insert = ' ' + insert;
+    if (after.length === 0 || !/\s/.test(after[0])) insert += ' ';
+    editor.value = before + insert + after;
+    const newCursor = before.length + insert.length;
+    editor.focus();
+    editor.selectionStart = editor.selectionEnd = newCursor;
+
+    if (editor === floatInput) {
+      inputArea.value = floatInput.value;
+    } else {
+      floatInput.value = inputArea.value;
+    }
+    validate();
+  }
+
+  function buildWordBank() {
+    const buckets = {};
+    activeWordsArray.forEach(w => {
+      const cat = posMap[w] || 'other';
+      (buckets[cat] = buckets[cat] || []).push(w);
+    });
+
+    wordBankTotal.textContent = activeWordsArray.length.toLocaleString() + ' words available';
+    wordBankCategories.innerHTML = '';
+
+    CATEGORY_ORDER.forEach(cat => {
+      const words = (buckets[cat] || []).slice().sort();
+      const card = document.createElement('div');
+      card.className = 'wordbank-category' + (words.length === 0 ? ' is-empty' : '');
+      card.dataset.category = cat;
+
+      const header = document.createElement('div');
+      header.className = 'wordbank-category-header';
+      header.innerHTML = '<span class="wordbank-category-name">' + CATEGORY_LABELS[cat] + '</span>'
+        + '<span class="wordbank-category-count">' + words.length.toLocaleString() + '</span>';
+      card.appendChild(header);
+
+      const list = document.createElement('div');
+      list.className = 'word-bubble-list';
+      words.forEach(w => {
+        const bubble = document.createElement('button');
+        bubble.type = 'button';
+        bubble.className = 'word-bubble';
+        bubble.textContent = w;
+        bubble.dataset.word = w;
+        bubble.addEventListener('click', () => insertWordAtCursor(w));
+        list.appendChild(bubble);
+      });
+      card.appendChild(list);
+
+      wordBankCategories.appendChild(card);
+    });
+
+    applyWordBankFilter();
+  }
+
+  function applyWordBankFilter() {
+    const q = wordBankFilter.value.trim().toLowerCase();
+    Array.from(wordBankCategories.children).forEach(card => {
+      let visibleCount = 0;
+      Array.from(card.querySelectorAll('.word-bubble')).forEach(b => {
+        const match = !q || b.dataset.word.startsWith(q);
+        b.classList.toggle('is-hidden', !match);
+        if (match) visibleCount++;
+      });
+      const hasAny = card.querySelectorAll('.word-bubble').length > 0;
+      card.classList.toggle('is-empty', !hasAny || visibleCount === 0);
+    });
+  }
+
+  wordBankFilter.addEventListener('input', applyWordBankFilter);
+
+  wordBankToggle.addEventListener('change', () => {
+    const on = wordBankToggle.checked;
+    wordBankPanel.hidden = !on;
+    if (on) buildWordBank();
+  });
+
+  // ---- Auto-suggest ----
+
+  const wordCharRe = /[A-Za-z'’-]/;
+
+  function getCurrentWordRange(text, pos) {
+    let start = pos;
+    while (start > 0 && wordCharRe.test(text[start - 1])) start--;
+    let end = pos;
+    while (end < text.length && wordCharRe.test(text[end])) end++;
+    return { start, end };
+  }
+
+  function getSuggestions(prefix) {
+    const lower = prefix.toLowerCase();
+    if (!lower) return [];
+    const matches = [];
+    for (let i = 0; i < activeWordsArray.length; i++) {
+      const w = activeWordsArray[i];
+      if (w.startsWith(lower)) matches.push(w);
+    }
+    matches.sort((a, b) => a.length - b.length || a.localeCompare(b));
+    return matches.slice(0, 8);
+  }
+
+  function getCaretCoordinates(textarea, position) {
+    const style = getComputedStyle(textarea);
+    const props = ['boxSizing', 'width', 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft',
+      'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth', 'fontFamily', 'fontSize',
+      'fontWeight', 'fontStyle', 'lineHeight', 'letterSpacing', 'wordSpacing', 'tabSize', 'textTransform'];
+    props.forEach(p => { mirrorDiv.style[p] = style[p]; });
+
+    const before = textarea.value.substring(0, position);
+    const after = textarea.value.substring(position) || '.';
+    mirrorDiv.textContent = '';
+    mirrorDiv.appendChild(document.createTextNode(before));
+    const span = document.createElement('span');
+    span.textContent = after[0];
+    mirrorDiv.appendChild(span);
+    mirrorDiv.appendChild(document.createTextNode(after.substring(1)));
+
+    return { top: span.offsetTop, left: span.offsetLeft, height: span.offsetHeight };
+  }
+
+  function positionDropdown(pos) {
+    const coords = getCaretCoordinates(inputArea, pos);
+    let left = coords.left;
+    let top = coords.top - inputArea.scrollTop + coords.height + 6;
+    const maxLeft = writeSurface.clientWidth - suggestDropdown.offsetWidth - 4;
+    if (left > maxLeft) left = Math.max(0, maxLeft);
+    suggestDropdown.style.left = left + 'px';
+    suggestDropdown.style.top = top + 'px';
+  }
+
+  function renderDropdown(prefix, matches) {
+    suggestDropdown.innerHTML = matches.map((w, i) => {
+      const rest = w.slice(prefix.length);
+      return '<div class="suggest-item' + (i === 0 ? ' active' : '') + '" data-index="' + i + '" role="option">'
+        + '<span>' + escapeHtml(prefix) + '</span><span class="rest">' + escapeHtml(rest) + '</span></div>';
+    }).join('') + '<div class="suggest-hint">' + (matches.length === 1 ? 'Tab / Enter to accept' : '&uarr;&darr; choose &middot; Tab / Enter accept &middot; Esc dismiss') + '</div>';
+
+    Array.from(suggestDropdown.querySelectorAll('.suggest-item')).forEach(el => {
+      el.addEventListener('click', () => acceptSuggestion(Number(el.dataset.index)));
+    });
+
+    activeIndex = 0;
+    suggestDropdown.classList.add('open');
+    inputArea.setAttribute('aria-expanded', 'true');
+  }
+
+  function closeSuggestions() {
+    currentMatches = [];
+    currentRange = null;
+    suggestDropdown.classList.remove('open');
+    suggestDropdown.innerHTML = '';
+    inputArea.setAttribute('aria-expanded', 'false');
+  }
+
+  function highlightActive() {
+    const items = suggestDropdown.querySelectorAll('.suggest-item');
+    items.forEach((el, i) => el.classList.toggle('active', i === activeIndex));
+    if (items[activeIndex]) items[activeIndex].scrollIntoView({ block: 'nearest' });
+  }
+
+  function acceptSuggestion(idx) {
+    if (!currentMatches[idx] || !currentRange) return;
+    const word = currentMatches[idx];
+    const text = inputArea.value;
+    const { start, end } = currentRange;
+    let insert = word;
+    const after = text.slice(end);
+    if (after.length === 0 || !/\s/.test(after[0])) insert += ' ';
+    const newText = text.slice(0, start) + insert + after;
+    const newCursor = start + insert.length;
+    inputArea.value = newText;
+    inputArea.selectionStart = inputArea.selectionEnd = newCursor;
+    closeSuggestions();
+    validate();
+    inputArea.focus();
+  }
+
+  function updateSuggestions() {
+    if (inputArea.selectionStart !== inputArea.selectionEnd) { closeSuggestions(); return; }
+    const pos = inputArea.selectionStart;
+    const text = inputArea.value;
+    const range = getCurrentWordRange(text, pos);
+    const prefix = text.slice(range.start, pos).replace(/^['’-]+/, '');
+    if (!prefix) { closeSuggestions(); return; }
+    const matches = getSuggestions(prefix);
+    if (matches.length === 0) { closeSuggestions(); return; }
+    if (matches.length === 1 && matches[0] === prefix.toLowerCase() && pos === range.end) { closeSuggestions(); return; }
+    currentMatches = matches;
+    currentRange = { start: range.start, end: range.end };
+    renderDropdown(prefix, matches);
+    positionDropdown(pos);
+  }
+
+  inputArea.addEventListener('input', () => {
+    floatInput.value = inputArea.value;
+    validate();
+    updateSuggestions();
+  });
+  inputArea.addEventListener('click', updateSuggestions);
+  inputArea.addEventListener('keyup', (e) => {
+    if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) updateSuggestions();
+  });
+  inputArea.addEventListener('blur', () => setTimeout(closeSuggestions, 150));
+
+  inputArea.addEventListener('keydown', (e) => {
+    if (!suggestDropdown.classList.contains('open')) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      activeIndex = (activeIndex + 1) % currentMatches.length;
+      highlightActive();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      activeIndex = (activeIndex - 1 + currentMatches.length) % currentMatches.length;
+      highlightActive();
+    } else if (e.key === 'Enter' || e.key === 'Tab') {
+      e.preventDefault();
+      acceptSuggestion(activeIndex);
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      closeSuggestions();
+    }
+  });
+
+  inputArea.addEventListener('scroll', () => {
+    highlightLayer.scrollTop = inputArea.scrollTop;
+    highlightLayer.scrollLeft = inputArea.scrollLeft;
+    if (suggestDropdown.classList.contains('open')) positionDropdown(inputArea.selectionStart);
+  });
+
+  // ---- Floating composer (visible while scrolled past the main textarea) ----
+
+  floatInput.addEventListener('input', () => {
+    inputArea.value = floatInput.value;
+    validate();
+  });
+
+  if ('IntersectionObserver' in window) {
+    const composerObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          floatComposer.classList.remove('visible');
+        } else if (entry.boundingClientRect.top < 0) {
+          floatInput.value = inputArea.value;
+          floatComposer.classList.add('visible');
+        }
+      });
+    }, { threshold: 0 });
+    composerObserver.observe(writeSurface);
+  }
+
+  rebuildActiveSet();
+})();
+</script>
