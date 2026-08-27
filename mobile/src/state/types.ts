@@ -16,6 +16,7 @@ export interface Vote {
 
 export type Phase =
   | 'players'
+  | 'rolling'
   | 'pass-answer'
   | 'answer'
   | 'reveal'
@@ -25,14 +26,15 @@ export type Phase =
   | 'final';
 
 /**
- * The vocabulary source for a round: either one chapter, or a page range.
- * "Page" here is an approximation (~275-word chunks of the running text,
- * not real printed-edition page numbers) — see build/build-data.js in the
- * web app's repo for how they're generated.
+ * The vocabulary source for a round: either one chapter, or a set of pages
+ * (not necessarily adjacent — each is picked independently). "Page" here is
+ * an approximation (~275-word chunks of the running text, not real
+ * printed-edition page numbers) — see build/build-data.js in the web app's
+ * repo for how they're generated.
  */
 export type RoundSource =
   | { type: 'chapter'; num: number }
-  | { type: 'pages'; start: number; end: number };
+  | { type: 'pages'; nums: number[] };
 
 export interface GameState {
   phase: Phase;

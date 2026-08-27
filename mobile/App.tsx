@@ -4,15 +4,16 @@ import { StyleSheet, View } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
 import {
-  CormorantGaramond_500Medium_Italic,
-  CormorantGaramond_600SemiBold,
-  CormorantGaramond_700Bold,
-} from '@expo-google-fonts/cormorant-garamond';
+  Baloo2_500Medium,
+  Baloo2_600SemiBold,
+  Baloo2_800ExtraBold,
+} from '@expo-google-fonts/baloo-2';
 import {
-  EBGaramond_400Regular,
-  EBGaramond_400Regular_Italic,
-  EBGaramond_500Medium,
-} from '@expo-google-fonts/eb-garamond';
+  Nunito_400Regular,
+  Nunito_500Medium,
+  Nunito_500Medium_Italic,
+  Nunito_700Bold,
+} from '@expo-google-fonts/nunito';
 import {
   IBMPlexMono_400Regular,
   IBMPlexMono_500Medium,
@@ -22,6 +23,7 @@ import { GameProvider, useGame } from './src/state/GameContext';
 import { formatSourceLabel } from './src/utils/sourceLabel';
 import { colors } from './src/theme';
 import { PlayersScreen } from './src/screens/PlayersScreen';
+import { RollingScreen } from './src/screens/RollingScreen';
 import { PassDeviceScreen } from './src/screens/PassDeviceScreen';
 import { AnswerScreen } from './src/screens/AnswerScreen';
 import { RevealScreen } from './src/screens/RevealScreen';
@@ -38,13 +40,18 @@ function Root() {
     case 'players':
       return <PlayersScreen />;
 
+    case 'rolling':
+      return <RollingScreen />;
+
     case 'pass-answer': {
       const playerId = state.turnOrder[state.turnIndex];
       const player = state.players.find((p) => p.id === playerId);
       if (!player || !state.currentPrompt || !state.currentSource) return null;
+      const playerIndex = state.players.findIndex((p) => p.id === playerId);
       return (
         <PassDeviceScreen
           playerName={player.name}
+          playerIndex={playerIndex}
           prompt={state.currentPrompt}
           sourceLabel={formatSourceLabel(state.currentSource)}
           subtitle={`ROUND ${state.round} · YOUR TURN TO ANSWER`}
@@ -64,9 +71,11 @@ function Root() {
       const voterId = state.turnOrder[state.voteTurnIndex];
       const voter = state.players.find((p) => p.id === voterId);
       if (!voter || !state.currentPrompt || !state.currentSource) return null;
+      const voterIndex = state.players.findIndex((p) => p.id === voterId);
       return (
         <PassDeviceScreen
           playerName={voter.name}
+          playerIndex={voterIndex}
           prompt={state.currentPrompt}
           sourceLabel={formatSourceLabel(state.currentSource)}
           subtitle={`ROUND ${state.round} · YOUR TURN TO VOTE`}
@@ -92,12 +101,13 @@ function Root() {
 
 export default function App() {
   const [fontsLoaded, fontError] = useFonts({
-    CormorantGaramond_600SemiBold,
-    CormorantGaramond_700Bold,
-    CormorantGaramond_500Medium_Italic,
-    EBGaramond_400Regular,
-    EBGaramond_400Regular_Italic,
-    EBGaramond_500Medium,
+    Baloo2_500Medium,
+    Baloo2_600SemiBold,
+    Baloo2_800ExtraBold,
+    Nunito_400Regular,
+    Nunito_500Medium,
+    Nunito_500Medium_Italic,
+    Nunito_700Bold,
     IBMPlexMono_400Regular,
     IBMPlexMono_500Medium,
   });
@@ -125,6 +135,6 @@ export default function App() {
 const styles = StyleSheet.create({
   flex: {
     flex: 1,
-    backgroundColor: colors.paperShadow,
+    backgroundColor: colors.bg,
   },
 });

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useGame } from '../state/GameContext';
-import { colors, fonts, radii, spacing } from '../theme';
+import { colors, fonts, playerColor, radii, spacing } from '../theme';
 import { PrimaryButton } from '../components/PrimaryButton';
 
 export function PlayersScreen() {
@@ -19,10 +19,10 @@ export function PlayersScreen() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <Text style={styles.kicker}>A VOCABULARY CONFINED TO LONGBOURN</Text>
+      <Text style={styles.kicker}>A PARTY GAME OF BORROWED WORDS</Text>
       <Text style={styles.title}>Lexiconned</Text>
       <Text style={styles.tagline}>
-        Answer party prompts using only words from a random chapter of{' '}
+        Answer party prompts using only words from a random page or two of{' '}
         <Text style={styles.italic}>Pride and Prejudice</Text>.
       </Text>
 
@@ -34,9 +34,12 @@ export function PlayersScreen() {
         style={styles.list}
         contentContainerStyle={state.players.length === 0 ? styles.emptyList : undefined}
         ListEmptyComponent={<Text style={styles.emptyText}>Add at least 2 players to begin.</Text>}
-        renderItem={({ item }) => (
-          <View style={styles.playerRow}>
-            <Text style={styles.playerName}>{item.name}</Text>
+        renderItem={({ item, index }) => (
+          <View style={[styles.playerRow, { borderColor: playerColor(index) }]}>
+            <View style={styles.playerNameRow}>
+              <View style={[styles.dot, { backgroundColor: playerColor(index) }]} />
+              <Text style={styles.playerName}>{item.name}</Text>
+            </View>
             <Text style={styles.remove} onPress={() => dispatch({ type: 'REMOVE_PLAYER', id: item.id })}>
               Remove
             </Text>
@@ -48,7 +51,7 @@ export function PlayersScreen() {
         <TextInput
           style={styles.input}
           placeholder="Player name"
-          placeholderTextColor={colors.inkFaint}
+          placeholderTextColor={colors.textFaint}
           value={name}
           onChangeText={setName}
           onSubmitEditing={addPlayer}
@@ -73,28 +76,28 @@ export function PlayersScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.paperShadow,
+    backgroundColor: colors.bg,
     padding: spacing.lg,
     paddingTop: spacing.xl,
   },
   kicker: {
     fontFamily: fonts.mono,
     fontSize: 11,
-    letterSpacing: 2,
-    color: colors.inkFaint,
+    letterSpacing: 1.5,
+    color: colors.textFaint,
     textAlign: 'center',
   },
   title: {
     fontFamily: fonts.displayBold,
-    fontSize: 44,
-    color: colors.ink,
+    fontSize: 48,
+    color: colors.primary,
     textAlign: 'center',
     marginTop: spacing.xs,
   },
   tagline: {
     fontFamily: fonts.bodyItalic,
     fontSize: 15,
-    color: colors.inkSoft,
+    color: colors.textSoft,
     textAlign: 'center',
     marginTop: spacing.sm,
     marginBottom: spacing.lg,
@@ -107,7 +110,7 @@ const styles = StyleSheet.create({
     fontFamily: fonts.mono,
     fontSize: 11,
     letterSpacing: 1.5,
-    color: colors.inkFaint,
+    color: colors.textFaint,
     marginBottom: spacing.sm,
   },
   list: {
@@ -120,25 +123,34 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontFamily: fonts.bodyItalic,
-    color: colors.inkFaint,
+    color: colors.textFaint,
     textAlign: 'center',
   },
   playerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: colors.paperRaised,
-    borderColor: colors.rule,
-    borderWidth: 1,
+    backgroundColor: colors.surfaceRaised,
+    borderWidth: 2,
     borderRadius: radii.sm,
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
     marginBottom: spacing.xs,
   },
+  playerNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
+  dot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+  },
   playerName: {
     fontFamily: fonts.bodyMedium,
     fontSize: 17,
-    color: colors.ink,
+    color: colors.text,
   },
   remove: {
     fontFamily: fonts.mono,
@@ -153,15 +165,15 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    borderWidth: 1,
-    borderColor: colors.rule,
+    borderWidth: 2,
+    borderColor: colors.border,
     borderRadius: radii.sm,
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
     fontFamily: fonts.body,
     fontSize: 16,
-    color: colors.ink,
-    backgroundColor: colors.paperRaised,
+    color: colors.text,
+    backgroundColor: colors.surfaceRaised,
   },
   startButton: {
     marginTop: spacing.lg,
@@ -169,7 +181,7 @@ const styles = StyleSheet.create({
   hint: {
     fontFamily: fonts.monoRegular,
     fontSize: 12,
-    color: colors.inkFaint,
+    color: colors.textFaint,
     textAlign: 'center',
     marginTop: spacing.xs,
   },

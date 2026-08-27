@@ -5,8 +5,8 @@ import pagesData from '../data/pages.json';
 
 type WordEntry = { num: number; words: string[] };
 
-const CHAPTER_COUNT = (chaptersData as WordEntry[]).length;
-const PAGE_COUNT = (pagesData as WordEntry[]).length;
+export const CHAPTER_COUNT = (chaptersData as WordEntry[]).length;
+export const PAGE_COUNT = (pagesData as WordEntry[]).length;
 
 export function makeId(): string {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
@@ -32,15 +32,21 @@ function pickPrompt(used: number[]): { index: number; text: string; used: number
   return { index, text: PROMPTS[index], used: [...nextUsed, index] };
 }
 
+/** Picks `count` distinct random page numbers — not necessarily adjacent. */
+function pickDistinctPages(count: number): number[] {
+  const n = Math.min(Math.max(1, count), PAGE_COUNT);
+  const nums = new Set<number>();
+  while (nums.size < n) {
+    nums.add(Math.floor(Math.random() * PAGE_COUNT) + 1);
+  }
+  return Array.from(nums).sort((a, b) => a - b);
+}
+
 function pickRoundSource(): RoundSource {
   if (ROUND_SOURCE_MODE === 'chapter') {
     return { type: 'chapter', num: Math.floor(Math.random() * CHAPTER_COUNT) + 1 };
   }
-  const span = Math.max(1, PAGES_PER_ROUND);
-  const maxStart = Math.max(1, PAGE_COUNT - span + 1);
-  const start = Math.floor(Math.random() * maxStart) + 1;
-  const end = Math.min(start + span - 1, PAGE_COUNT);
-  return { type: 'pages', start, end };
+  return { type: 'pages', nums: pickDistinctPages(PAGES_PER_ROUND) };
 }
 
 export function getWordsForSource(source: RoundSource): string[] {
@@ -50,7 +56,7 @@ export function getWordsForSource(source: RoundSource): string[] {
   }
   const set = new Set<string>();
   (pagesData as WordEntry[]).forEach((pg) => {
-    if (pg.num >= source.start && pg.num <= source.end) pg.words.forEach((w) => set.add(w));
+    if (source.nums.includes(pg.num)) pg.words.forEach((w) => set.add(w));
   });
   return Array.from(set).sort();
 }
@@ -75,6 +81,7 @@ export type Action =
   | { type: 'ADD_PLAYER'; name: string }
   | { type: 'REMOVE_PLAYER'; id: string }
   | { type: 'START_GAME' }
+  | { type: 'ROLL_COMPLETE' }
   | { type: 'READY_FOR_ANSWER' }
   | { type: 'SUBMIT_ANSWER'; text: string }
   | { type: 'START_VOTING' }
@@ -90,7 +97,7 @@ function startRound(state: GameState, round: number): GameState {
   const turnOrder = shuffle(state.players.map((p) => p.id));
   return {
     ...state,
-    phase: 'pass-answer',
+    phase: 'rolling',
     round,
     usedPromptIndices: used,
     currentPrompt: text,
@@ -121,6 +128,10 @@ export function gameReducer(state: GameState, action: Action): GameState {
     case 'START_GAME': {
       if (state.players.length < 2) return state;
       return startRound(state, 1);
+    }
+
+    case 'ROLL_COMPLETE': {
+      return { ...state, phase: 'pass-answer' };
     }
 
     case 'READY_FOR_ANSWER': {

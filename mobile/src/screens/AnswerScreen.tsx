@@ -12,7 +12,7 @@ import { useGame } from '../state/GameContext';
 import { getWordsForSource } from '../state/gameReducer';
 import { checkText } from '../utils/wordCheck';
 import { formatSourceLabel } from '../utils/sourceLabel';
-import { colors, fonts, radii, spacing } from '../theme';
+import { colors, fonts, playerColor, radii, spacing } from '../theme';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { PromptCard } from '../components/PromptCard';
 import { WordBankSheet } from '../components/WordBankSheet';
@@ -24,6 +24,8 @@ export function AnswerScreen() {
 
   const playerId = state.turnOrder[state.turnIndex];
   const player = state.players.find((p) => p.id === playerId);
+  const playerIndex = state.players.findIndex((p) => p.id === playerId);
+  const accent = playerColor(playerIndex);
   const sourceWords = useMemo(
     () => (state.currentSource ? getWordsForSource(state.currentSource) : []),
     [state.currentSource],
@@ -48,14 +50,14 @@ export function AnswerScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
-        <Text style={styles.kicker}>{player.name.toUpperCase()}'S TURN</Text>
-        <PromptCard prompt={state.currentPrompt} sourceLabel={sourceLabel} />
+        <Text style={[styles.kicker, { color: accent }]}>{player.name.toUpperCase()}'S TURN</Text>
+        <PromptCard prompt={state.currentPrompt} sourceLabel={sourceLabel} accentColor={accent} />
 
         <TextInput
           style={styles.input}
           multiline
           placeholder="Type your answer here…"
-          placeholderTextColor={colors.inkFaint}
+          placeholderTextColor={colors.textFaint}
           value={text}
           onChangeText={setText}
         />
@@ -67,7 +69,7 @@ export function AnswerScreen() {
               <Text style={styles.flaggedText}> · {check.flaggedWords.length} not allowed</Text>
             )}
           </Text>
-          <Text style={styles.wordBankLink} onPress={() => setBankVisible(true)}>
+          <Text style={[styles.wordBankLink, { color: accent }]} onPress={() => setBankVisible(true)}>
             Browse Word Bank
           </Text>
         </View>
@@ -83,6 +85,7 @@ export function AnswerScreen() {
           label="Submit Answer"
           onPress={submit}
           disabled={!canSubmit}
+          color={accent}
           style={styles.submitButton}
         />
       </ScrollView>
@@ -100,7 +103,7 @@ export function AnswerScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.paperShadow,
+    backgroundColor: colors.bg,
   },
   scroll: {
     padding: spacing.lg,
@@ -110,21 +113,20 @@ const styles = StyleSheet.create({
     fontFamily: fonts.mono,
     fontSize: 11,
     letterSpacing: 1.5,
-    color: colors.inkFaint,
     marginBottom: spacing.sm,
   },
   input: {
     marginTop: spacing.md,
     minHeight: 140,
-    borderWidth: 1,
-    borderColor: colors.rule,
+    borderWidth: 2,
+    borderColor: colors.border,
     borderRadius: radii.md,
-    backgroundColor: colors.paperRaised,
+    backgroundColor: colors.surfaceRaised,
     padding: spacing.md,
     fontFamily: fonts.body,
     fontSize: 18,
     lineHeight: 26,
-    color: colors.ink,
+    color: colors.text,
     textAlignVertical: 'top',
   },
   statusRow: {
@@ -136,7 +138,7 @@ const styles = StyleSheet.create({
   statusText: {
     fontFamily: fonts.monoRegular,
     fontSize: 12,
-    color: colors.inkFaint,
+    color: colors.textFaint,
   },
   flaggedText: {
     color: colors.flag,
@@ -144,12 +146,11 @@ const styles = StyleSheet.create({
   wordBankLink: {
     fontFamily: fonts.mono,
     fontSize: 12,
-    color: colors.accentStrong,
     letterSpacing: 0.3,
   },
   flaggedBox: {
     marginTop: spacing.sm,
-    backgroundColor: 'rgba(162, 62, 72, 0.08)',
+    backgroundColor: colors.flagBg,
     borderRadius: radii.sm,
     padding: spacing.sm,
   },

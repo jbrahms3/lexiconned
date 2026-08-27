@@ -3,18 +3,22 @@
 A party game built with Expo/React Native, sharing its vocabulary data with
 the [Longbourn Lexicon](../README.md) web app.
 
-Each round: a random prompt is paired with a random vocabulary source from
-*Pride and Prejudice* — by default, a random 2-page window (see "Pages vs.
-chapters" below). Players take turns answering the prompt using only words
-found in that source, everyone's answers are revealed anonymously, and the
-group votes for their favorite. Points accumulate across rounds.
+Each round opens with a slot-machine-style roll: two page-number reels spin
+and land on two independently-picked pages (not necessarily next to each
+other) from *Pride and Prejudice* — that pair becomes the round's
+vocabulary. A random prompt is paired with it, players take turns answering
+using only words found on those pages, everyone's answers are revealed
+anonymously, and the group votes for their favorite. Points accumulate
+across rounds.
 
 ## Pages vs. chapters
 
 `src/state/types.ts` exports `ROUND_SOURCE_MODE`, set to `'pages'` by
-default — each round uses a random `PAGES_PER_ROUND`-page window (2 pages,
-~550 words, a much smaller pool than a full chapter). Set it to `'chapter'`
-to go back to whole-chapter rounds instead. "Pages" are an approximation
+default — each round picks `PAGES_PER_ROUND` (2) distinct random pages,
+independently of each other, unioning their vocabulary (~550 words
+combined, a much smaller pool than a full chapter). Set it to `'chapter'`
+to go back to whole-chapter rounds instead — the roll animation adapts
+automatically (one reel instead of two). "Pages" are an approximation
 (~275-word chunks of the running text, not real printed-edition page
 numbers) — see the web app's `build/build-data.js` for how they're
 generated.
@@ -44,10 +48,17 @@ simulator/emulator.
 ## Project layout
 
 - `App.tsx` — loads fonts, wires the game phases to screens.
+- `src/theme.ts` — colors and fonts. Each player is assigned one color
+  from `PLAYER_COLORS` by join order (`playerColor(index)`), used
+  throughout for their name, turn screens, and answer cards.
 - `src/state/` — the game reducer (players, rounds, turn order, scoring)
   and its React context.
-- `src/screens/` — one screen per game phase (players, pass-device,
+- `src/screens/` — one screen per game phase (players, rolling, pass-device,
   answer, reveal, vote, round results, final).
+- `src/screens/RollingScreen.tsx` — the slot-machine-style roll shown at
+  the start of each round: one reel per page (or one for a chapter),
+  spinning through random numbers before settling on the actual round
+  source that was already picked.
 - `src/components/` — shared UI: buttons, the prompt card, the word bank
   bottom sheet.
 - `src/data/prompts.ts` — the curated prompt list (original, written for

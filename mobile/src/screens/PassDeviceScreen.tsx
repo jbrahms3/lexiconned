@@ -1,11 +1,12 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { colors, fonts, spacing } from '../theme';
+import { colors, fonts, playerColor, spacing } from '../theme';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { PromptCard } from '../components/PromptCard';
 
 interface Props {
   playerName: string;
+  playerIndex: number;
   prompt: string;
   sourceLabel: string;
   subtitle: string;
@@ -13,20 +14,21 @@ interface Props {
   onReady: () => void;
 }
 
-export function PassDeviceScreen({ playerName, prompt, sourceLabel, subtitle, buttonLabel, onReady }: Props) {
+export function PassDeviceScreen({ playerName, playerIndex, prompt, sourceLabel, subtitle, buttonLabel, onReady }: Props) {
+  const accent = playerColor(playerIndex);
   return (
     <View style={styles.container}>
       <Text style={styles.kicker}>{subtitle}</Text>
       <Text style={styles.passTo}>Pass the phone to</Text>
-      <Text style={styles.playerName}>{playerName}</Text>
+      <Text style={[styles.playerName, { color: accent }]}>{playerName}</Text>
 
       <View style={styles.spacer} />
 
-      <PromptCard prompt={prompt} sourceLabel={sourceLabel} />
+      <PromptCard prompt={prompt} sourceLabel={sourceLabel} accentColor={accent} />
 
       <View style={styles.spacer} />
 
-      <PrimaryButton label={buttonLabel} onPress={onReady} />
+      <PrimaryButton label={buttonLabel} onPress={onReady} color={accent} />
     </View>
   );
 }
@@ -34,28 +36,27 @@ export function PassDeviceScreen({ playerName, prompt, sourceLabel, subtitle, bu
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.paperShadow,
+    backgroundColor: colors.bg,
     padding: spacing.lg,
     justifyContent: 'center',
   },
   kicker: {
     fontFamily: fonts.mono,
     fontSize: 11,
-    letterSpacing: 2,
-    color: colors.inkFaint,
+    letterSpacing: 1.5,
+    color: colors.textFaint,
     textAlign: 'center',
     marginBottom: spacing.sm,
   },
   passTo: {
     fontFamily: fonts.bodyItalic,
     fontSize: 18,
-    color: colors.inkSoft,
+    color: colors.textSoft,
     textAlign: 'center',
   },
   playerName: {
     fontFamily: fonts.displayBold,
-    fontSize: 40,
-    color: colors.ink,
+    fontSize: 42,
     textAlign: 'center',
     marginTop: spacing.xs,
   },

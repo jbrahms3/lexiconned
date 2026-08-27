@@ -31,7 +31,7 @@ export function WordBankSheet({ visible, words, onSelect, onClose }: Props) {
           <TextInput
             style={styles.search}
             placeholder="Filter words…"
-            placeholderTextColor={colors.inkFaint}
+            placeholderTextColor={colors.textFaint}
             value={filter}
             onChangeText={setFilter}
             autoCapitalize="none"
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   sheet: {
-    backgroundColor: colors.paperRaised,
+    backgroundColor: colors.surfaceRaised,
     borderTopLeftRadius: radii.lg,
     borderTopRightRadius: radii.lg,
     paddingTop: spacing.md,
@@ -86,30 +86,30 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: fonts.displayBold,
     fontSize: 20,
-    color: colors.ink,
+    color: colors.text,
   },
   close: {
     fontFamily: fonts.mono,
     fontSize: 13,
-    color: colors.accentStrong,
+    color: colors.primary,
     letterSpacing: 0.5,
   },
   search: {
-    borderWidth: 1,
-    borderColor: colors.rule,
+    borderWidth: 2,
+    borderColor: colors.border,
     borderRadius: radii.sm,
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.sm,
     fontFamily: fonts.bodyItalic,
     fontSize: 15,
-    color: colors.ink,
-    backgroundColor: colors.paper,
+    color: colors.text,
+    backgroundColor: colors.surface,
     marginBottom: spacing.xs,
   },
   count: {
     fontFamily: fonts.monoRegular,
     fontSize: 11,
-    color: colors.inkFaint,
+    color: colors.textFaint,
     marginBottom: spacing.sm,
   },
   list: {
@@ -128,8 +128,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   bubbleText: {
-    fontFamily: fonts.body,
+    fontFamily: fonts.bodyMedium,
     fontSize: 14,
-    color: colors.ink,
+    color: colors.primaryStrong,
   },
 });

@@ -7,21 +7,22 @@ interface Props {
   onPress: () => void;
   disabled?: boolean;
   variant?: 'primary' | 'secondary' | 'danger';
+  color?: string;
   style?: ViewStyle;
 }
 
-export function PrimaryButton({ label, onPress, disabled, variant = 'primary', style }: Props) {
+export function PrimaryButton({ label, onPress, disabled, variant = 'primary', color, style }: Props) {
   const isPrimary = variant === 'primary';
   const isDanger = variant === 'danger';
+  const fill = color || (isDanger ? colors.flag : colors.primary);
   return (
     <Pressable
       onPress={onPress}
       disabled={disabled}
       style={({ pressed }) => [
         styles.base,
-        isPrimary && styles.primary,
+        (isPrimary || isDanger) && { backgroundColor: fill, borderColor: fill },
         variant === 'secondary' && styles.secondary,
-        isDanger && styles.danger,
         disabled && styles.disabled,
         pressed && !disabled && styles.pressed,
         style,
@@ -30,8 +31,7 @@ export function PrimaryButton({ label, onPress, disabled, variant = 'primary', s
       <Text
         style={[
           styles.label,
-          isPrimary && styles.labelPrimary,
-          isDanger && styles.labelPrimary,
+          (isPrimary || isDanger) && styles.labelPrimary,
           variant === 'secondary' && styles.labelSecondary,
         ]}
       >
@@ -45,37 +45,30 @@ const styles = StyleSheet.create({
   base: {
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.lg,
-    borderRadius: radii.md,
+    borderRadius: radii.pill,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-  },
-  primary: {
-    backgroundColor: colors.accentStrong,
-    borderColor: colors.accentStrong,
+    borderWidth: 2,
   },
   secondary: {
     backgroundColor: 'transparent',
-    borderColor: colors.rule,
-  },
-  danger: {
-    backgroundColor: colors.flag,
-    borderColor: colors.flag,
+    borderColor: colors.border,
   },
   disabled: {
-    opacity: 0.45,
+    opacity: 0.4,
   },
   pressed: {
     opacity: 0.85,
+    transform: [{ scale: 0.98 }],
   },
   label: {
     fontFamily: fonts.displayBold,
     fontSize: 17,
   },
   labelPrimary: {
-    color: colors.paperRaised,
+    color: colors.onPrimary,
   },
   labelSecondary: {
-    color: colors.ink,
+    color: colors.text,
   },
 });
