@@ -137,7 +137,40 @@ const CATEGORY_ORDER = [
   ['Noun', 'noun'],
 ];
 
+// Curated rather than tagger-detected: compromise's generic first/last-name
+// dictionary is unreliable for a specific novel's cast when checked word by
+// word with no sentence context — it misses real characters ("Bennet",
+// "Kitty", "Bourgh") and flags unrelated common words as names ("Grace",
+// "Harmony", "Drew", "Lesson"). This list is the named characters and
+// address-titles that actually appear in the text, checked against the
+// book's real vocabulary rather than guessed.
+const PEOPLE_NAMES = [
+  // the Bennets
+  'bennet', 'elizabeth', 'eliza', 'lizzy', 'jane', 'mary', 'kitty', 'catherine', 'lydia',
+  // the Darcys
+  'darcy', 'fitzwilliam', 'georgiana',
+  // the Bingleys
+  'bingley', 'charles', 'caroline', 'louisa', 'hurst',
+  // Wickham
+  'wickham', 'george',
+  // the Collinses
+  'collins', 'william',
+  // the Lucases
+  'lucas', 'charlotte', 'maria',
+  // de Bourgh
+  'bourgh', 'anne',
+  // the Gardiners and Phillipses
+  'gardiner', 'phillips',
+  // servants and other named minor characters
+  'reynolds', 'nicholls', 'jenkinson', 'denny', 'forster', 'younge',
+  'annesley', 'jones', 'morris', 'robinson', 'goulding', 'carter',
+  // address-titles that name a specific person
+  'mr', 'mrs', 'miss', 'sir', 'lady', 'colonel', 'esq',
+];
+const PEOPLE_SET = new Set(PEOPLE_NAMES.flatMap((w) => [w, w + "'s"]));
+
 function categorize(word) {
+  if (PEOPLE_SET.has(word)) return 'person';
   let tags = [];
   try {
     const j = nlp(word).json();

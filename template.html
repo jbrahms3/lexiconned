@@ -1044,9 +1044,9 @@
   const pages = data.pages || []; // [{num, words: [...] }], ~275-word chunks
   const posMap = data.pos || {};
 
-  const CATEGORY_ORDER = ['noun', 'proper', 'verb', 'adjective', 'adverb', 'pronoun', 'determiner', 'preposition', 'conjunction', 'interjection', 'number', 'other'];
+  const CATEGORY_ORDER = ['noun', 'person', 'proper', 'verb', 'adjective', 'adverb', 'pronoun', 'determiner', 'preposition', 'conjunction', 'interjection', 'number', 'other'];
   const CATEGORY_LABELS = {
-    noun: 'Nouns', proper: 'Proper Nouns', verb: 'Verbs', adjective: 'Adjectives',
+    noun: 'Nouns', person: 'People', proper: 'Proper Nouns', verb: 'Verbs', adjective: 'Adjectives',
     adverb: 'Adverbs', pronoun: 'Pronouns', determiner: 'Determiners', preposition: 'Prepositions',
     conjunction: 'Conjunctions', interjection: 'Interjections', number: 'Numbers', other: 'Other'
   };
