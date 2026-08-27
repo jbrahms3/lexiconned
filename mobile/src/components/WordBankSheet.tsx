@@ -1,6 +1,8 @@
-import React, { useMemo, useState } from 'react';
-import { FlatList, Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { FlatList, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { colors, fonts, radii, spacing } from '../theme';
+import { CATEGORY_LABELS, CATEGORY_ORDER, Category } from '../utils/categories';
+import posMap from '../data/pos.json';
 
 interface Props {
   visible: boolean;
@@ -11,12 +13,38 @@ interface Props {
 
 export function WordBankSheet({ visible, words, onSelect, onClose }: Props) {
   const [filter, setFilter] = useState('');
+  const [activeCategory, setActiveCategory] = useState<Category>('noun');
+
+  const buckets = useMemo(() => {
+    const map: Partial<Record<Category, string[]>> = {};
+    const pos = posMap as Record<string, Category>;
+    words.forEach((w) => {
+      const cat = pos[w] || 'other';
+      (map[cat] = map[cat] || []).push(w);
+    });
+    CATEGORY_ORDER.forEach((cat) => map[cat]?.sort());
+    return map;
+  }, [words]);
+
+  const availableCategories = useMemo(
+    () => CATEGORY_ORDER.filter((cat) => (buckets[cat] || []).length > 0),
+    [buckets],
+  );
+
+  // Keep the active tab valid whenever the word list (and thus buckets) changes.
+  useEffect(() => {
+    if (availableCategories.length === 0) return;
+    if (!availableCategories.includes(activeCategory)) {
+      setActiveCategory(availableCategories[0]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [availableCategories]);
 
   const filtered = useMemo(() => {
     const q = filter.trim().toLowerCase();
-    const list = q ? words.filter((w) => w.startsWith(q)) : words;
-    return list.slice(0, 400); // cap render count for scroll performance
-  }, [words, filter]);
+    const list = buckets[activeCategory] || [];
+    return (q ? list.filter((w) => w.startsWith(q)) : list).slice(0, 400);
+  }, [buckets, activeCategory, filter]);
 
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
@@ -30,32 +58,50 @@ export function WordBankSheet({ visible, words, onSelect, onClose }: Props) {
           </View>
           <TextInput
             style={styles.search}
-            placeholder="Filter words…"
+            placeholder="Filter this category…"
             placeholderTextColor={colors.textFaint}
             value={filter}
             onChangeText={setFilter}
             autoCapitalize="none"
             autoCorrect={false}
           />
-          <Text style={styles.count}>
-            {words.length.toLocaleString()} word{words.length === 1 ? '' : 's'} available
-            {filter ? ` · showing ${filtered.length}` : ''}
-          </Text>
+
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.tabsRow}
+            contentContainerStyle={styles.tabsContent}
+          >
+            {availableCategories.map((cat) => {
+              const isActive = cat === activeCategory;
+              return (
+                <Pressable
+                  key={cat}
+                  style={[styles.tab, isActive && styles.tabActive]}
+                  onPress={() => setActiveCategory(cat)}
+                >
+                  <Text style={[styles.tabLabel, isActive && styles.tabLabelActive]}>
+                    {CATEGORY_LABELS[cat]}
+                  </Text>
+                  <Text style={[styles.tabCount, isActive && styles.tabLabelActive]}>
+                    {(buckets[cat] || []).length}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </ScrollView>
+
           <FlatList
             data={filtered}
             keyExtractor={(w) => w}
-            numColumns={1}
             style={styles.list}
             contentContainerStyle={styles.listContent}
+            ListEmptyComponent={<Text style={styles.emptyText}>No words match in this category.</Text>}
             renderItem={({ item }) => (
               <Pressable style={styles.bubble} onPress={() => onSelect(item)}>
                 <Text style={styles.bubbleText}>{item}</Text>
               </Pressable>
             )}
-            // Wrap bubbles by rendering them in a flex-wrap row via a single
-            // "row" content container instead of FlatList's own grid, since
-            // words have variable width.
-            key="wordbank-list"
           />
         </View>
       </View>
@@ -75,7 +121,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: radii.lg,
     paddingTop: spacing.md,
     paddingHorizontal: spacing.md,
-    height: '75%',
+    height: '78%',
   },
   header: {
     flexDirection: 'row',
@@ -104,13 +150,42 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: colors.text,
     backgroundColor: colors.surface,
-    marginBottom: spacing.xs,
+    marginBottom: spacing.sm,
   },
-  count: {
+  tabsRow: {
+    flexGrow: 0,
+    marginBottom: spacing.sm,
+  },
+  tabsContent: {
+    gap: 6,
+    paddingBottom: 2,
+  },
+  tab: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    gap: 5,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: radii.pill,
+    backgroundColor: colors.chipBg,
+  },
+  tabActive: {
+    backgroundColor: colors.primary,
+  },
+  tabLabel: {
+    fontFamily: fonts.bodyMedium,
+    fontSize: 14,
+    color: colors.primaryStrong,
+  },
+  tabCount: {
     fontFamily: fonts.monoRegular,
     fontSize: 11,
-    color: colors.textFaint,
-    marginBottom: spacing.sm,
+    color: colors.primaryStrong,
+    opacity: 0.75,
+  },
+  tabLabelActive: {
+    color: colors.onPrimary,
+    opacity: 1,
   },
   list: {
     flex: 1,
@@ -120,6 +195,12 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: 6,
     paddingBottom: spacing.lg,
+  },
+  emptyText: {
+    fontFamily: fonts.bodyItalic,
+    fontSize: 14,
+    color: colors.textFaint,
+    paddingTop: spacing.md,
   },
   bubble: {
     backgroundColor: colors.chipBg,

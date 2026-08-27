@@ -1,6 +1,7 @@
 /**
- * Regenerates src/data/chapters.json and src/data/pages.json from the
- * web app's build/pp_words.json (word identities only — no prose).
+ * Regenerates src/data/chapters.json, src/data/pages.json, and
+ * src/data/pos.json from the web app's build/pp_words.json (word
+ * identities and part-of-speech tags only — no prose).
  *
  * Run after rebuilding ../build/pp_words.json (see the web app's
  * build/build-data.js):
@@ -25,4 +26,13 @@ fs.writeFileSync(
   JSON.stringify(pages),
 );
 
-console.log('Wrote chapters.json (' + chapters.length + ' chapters) and pages.json (' + pages.length + ' pages)');
+const pos = data.pos || {};
+fs.writeFileSync(
+  path.join(__dirname, '..', 'src', 'data', 'pos.json'),
+  JSON.stringify(pos),
+);
+
+console.log(
+  'Wrote chapters.json (' + chapters.length + ' chapters), pages.json (' + pages.length + ' pages), '
+  + 'and pos.json (' + Object.keys(pos).length + ' tagged words)',
+);
