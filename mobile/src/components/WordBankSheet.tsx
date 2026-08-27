@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { FlatList, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { colors, fonts, radii, spacing } from '../theme';
-import { CATEGORY_LABELS, CATEGORY_ORDER, Category } from '../utils/categories';
+import { CATEGORY_LABELS, CATEGORY_ORDER, Category, simplifyCategory } from '../utils/categories';
 import posMap from '../data/pos.json';
 
 interface Props {
@@ -13,13 +13,13 @@ interface Props {
 
 export function WordBankSheet({ visible, words, onSelect, onClose }: Props) {
   const [filter, setFilter] = useState('');
-  const [activeCategory, setActiveCategory] = useState<Category>('noun');
+  const [activeCategory, setActiveCategory] = useState<Category>('things');
 
   const buckets = useMemo(() => {
     const map: Partial<Record<Category, string[]>> = {};
-    const pos = posMap as Record<string, Category>;
+    const pos = posMap as Record<string, string>;
     words.forEach((w) => {
-      const cat = pos[w] || 'other';
+      const cat = simplifyCategory(pos[w]);
       (map[cat] = map[cat] || []).push(w);
     });
     CATEGORY_ORDER.forEach((cat) => map[cat]?.sort());
@@ -83,7 +83,7 @@ export function WordBankSheet({ visible, words, onSelect, onClose }: Props) {
                   <Text style={[styles.tabLabel, isActive && styles.tabLabelActive]}>
                     {CATEGORY_LABELS[cat]}
                   </Text>
-                  <Text style={[styles.tabCount, isActive && styles.tabLabelActive]}>
+                  <Text style={[styles.tabCount, isActive && styles.tabCountActive]}>
                     {(buckets[cat] || []).length}
                   </Text>
                 </Pressable>
@@ -162,30 +162,44 @@ const styles = StyleSheet.create({
   },
   tab: {
     flexDirection: 'row',
-    alignItems: 'baseline',
-    gap: 5,
-    paddingVertical: 8,
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: 9,
     paddingHorizontal: 14,
-    borderRadius: radii.pill,
-    backgroundColor: colors.chipBg,
+    borderRadius: radii.sm,
+    backgroundColor: colors.surface,
+    borderWidth: 2,
+    borderColor: colors.border,
   },
   tabActive: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.text,
+    borderColor: colors.text,
   },
   tabLabel: {
-    fontFamily: fonts.bodyMedium,
-    fontSize: 14,
-    color: colors.primaryStrong,
+    fontFamily: fonts.mono,
+    fontSize: 11,
+    letterSpacing: 0.4,
+    textTransform: 'uppercase',
+    color: colors.textSoft,
   },
   tabCount: {
     fontFamily: fonts.monoRegular,
     fontSize: 11,
-    color: colors.primaryStrong,
-    opacity: 0.75,
+    color: colors.textFaint,
+    backgroundColor: colors.border,
+    borderRadius: radii.pill,
+    minWidth: 20,
+    textAlign: 'center',
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+    overflow: 'hidden',
   },
   tabLabelActive: {
-    color: colors.onPrimary,
-    opacity: 1,
+    color: colors.white,
+  },
+  tabCountActive: {
+    color: colors.text,
+    backgroundColor: colors.white,
   },
   list: {
     flex: 1,
