@@ -1,8 +1,12 @@
-import { GameState, Player } from './types';
+import { GameState, Player, RoundSource, ROUND_SOURCE_MODE, PAGES_PER_ROUND } from './types';
 import { PROMPTS } from '../data/prompts';
 import chaptersData from '../data/chapters.json';
+import pagesData from '../data/pages.json';
 
-const CHAPTER_COUNT = (chaptersData as { num: number; words: string[] }[]).length;
+type WordEntry = { num: number; words: string[] };
+
+const CHAPTER_COUNT = (chaptersData as WordEntry[]).length;
+const PAGE_COUNT = (pagesData as WordEntry[]).length;
 
 export function makeId(): string {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
@@ -28,13 +32,27 @@ function pickPrompt(used: number[]): { index: number; text: string; used: number
   return { index, text: PROMPTS[index], used: [...nextUsed, index] };
 }
 
-function pickChapter(): number {
-  return Math.floor(Math.random() * CHAPTER_COUNT) + 1;
+function pickRoundSource(): RoundSource {
+  if (ROUND_SOURCE_MODE === 'chapter') {
+    return { type: 'chapter', num: Math.floor(Math.random() * CHAPTER_COUNT) + 1 };
+  }
+  const span = Math.max(1, PAGES_PER_ROUND);
+  const maxStart = Math.max(1, PAGE_COUNT - span + 1);
+  const start = Math.floor(Math.random() * maxStart) + 1;
+  const end = Math.min(start + span - 1, PAGE_COUNT);
+  return { type: 'pages', start, end };
 }
 
-export function getChapterWords(chapterNum: number): string[] {
-  const entry = (chaptersData as { num: number; words: string[] }[]).find((c) => c.num === chapterNum);
-  return entry ? entry.words : [];
+export function getWordsForSource(source: RoundSource): string[] {
+  if (source.type === 'chapter') {
+    const entry = (chaptersData as WordEntry[]).find((c) => c.num === source.num);
+    return entry ? entry.words : [];
+  }
+  const set = new Set<string>();
+  (pagesData as WordEntry[]).forEach((pg) => {
+    if (pg.num >= source.start && pg.num <= source.end) pg.words.forEach((w) => set.add(w));
+  });
+  return Array.from(set).sort();
 }
 
 export const initialState: GameState = {
@@ -43,7 +61,7 @@ export const initialState: GameState = {
   round: 0,
   usedPromptIndices: [],
   currentPrompt: null,
-  currentChapter: null,
+  currentSource: null,
   turnOrder: [],
   turnIndex: 0,
   answers: [],
@@ -66,6 +84,27 @@ export type Action =
   | { type: 'END_GAME' }
   | { type: 'RESET' };
 
+function startRound(state: GameState, round: number): GameState {
+  const { text, used } = pickPrompt(state.usedPromptIndices);
+  const source = pickRoundSource();
+  const turnOrder = shuffle(state.players.map((p) => p.id));
+  return {
+    ...state,
+    phase: 'pass-answer',
+    round,
+    usedPromptIndices: used,
+    currentPrompt: text,
+    currentSource: source,
+    turnOrder,
+    turnIndex: 0,
+    answers: [],
+    revealOrder: [],
+    voteTurnIndex: 0,
+    votes: [],
+    lastRoundPoints: {},
+  };
+}
+
 export function gameReducer(state: GameState, action: Action): GameState {
   switch (action.type) {
     case 'ADD_PLAYER': {
@@ -81,24 +120,7 @@ export function gameReducer(state: GameState, action: Action): GameState {
 
     case 'START_GAME': {
       if (state.players.length < 2) return state;
-      const { index, text, used } = pickPrompt(state.usedPromptIndices);
-      const chapter = pickChapter();
-      const turnOrder = shuffle(state.players.map((p) => p.id));
-      return {
-        ...state,
-        phase: 'pass-answer',
-        round: 1,
-        usedPromptIndices: used,
-        currentPrompt: text,
-        currentChapter: chapter,
-        turnOrder,
-        turnIndex: 0,
-        answers: [],
-        revealOrder: [],
-        voteTurnIndex: 0,
-        votes: [],
-        lastRoundPoints: {},
-      };
+      return startRound(state, 1);
     }
 
     case 'READY_FOR_ANSWER': {
@@ -155,24 +177,7 @@ export function gameReducer(state: GameState, action: Action): GameState {
     }
 
     case 'NEXT_ROUND': {
-      const { index, text, used } = pickPrompt(state.usedPromptIndices);
-      const chapter = pickChapter();
-      const turnOrder = shuffle(state.players.map((p) => p.id));
-      return {
-        ...state,
-        phase: 'pass-answer',
-        round: state.round + 1,
-        usedPromptIndices: used,
-        currentPrompt: text,
-        currentChapter: chapter,
-        turnOrder,
-        turnIndex: 0,
-        answers: [],
-        revealOrder: [],
-        voteTurnIndex: 0,
-        votes: [],
-        lastRoundPoints: {},
-      };
+      return startRound(state, state.round + 1);
     }
 
     case 'END_GAME': {

@@ -81,6 +81,30 @@ function splitChapters(text) {
   }).sort((a, b) => a.num - b.num);
 }
 
+// Words-per-"page" for the page-level dataset. There is no real pagination
+// in a plain-text source — this just chunks the running word stream into
+// fixed-size groups (~275 words, a rough paperback-page average) so a
+// smaller-than-a-chapter unit is selectable. Page numbers here are an
+// approximation and won't match any specific printed edition.
+const WORDS_PER_PAGE = 275;
+
+function buildPages(text) {
+  const matches = [...text.matchAll(CHAPTER_RE)];
+  const bodyStarts = matches.map((m) => m.index + m[0].length);
+  const firstStart = Math.min(...bodyStarts);
+  const endTag = text.indexOf('\n\n\n\n\nTHE END');
+  const bookEnd = endTag !== -1 ? endTag : text.length;
+  const bookBody = text.slice(firstStart, bookEnd);
+
+  const words = tokenize(bookBody);
+  const pages = [];
+  for (let i = 0; i < words.length; i += WORDS_PER_PAGE) {
+    const chunk = words.slice(i, i + WORDS_PER_PAGE);
+    pages.push({ num: pages.length + 1, words: Array.from(new Set(chunk)).sort() });
+  }
+  return pages;
+}
+
 const WORD_RE = /[A-Za-z]+(?:['-][A-Za-z]+)*/g;
 
 function tokenize(str) {
@@ -145,7 +169,10 @@ async function main() {
   const pos = {};
   book.forEach((w) => { pos[w] = categorize(w); });
 
-  const output = { book, chapters, pos };
+  const pages = buildPages(text);
+  console.log('Built', pages.length, 'pages of ~' + WORDS_PER_PAGE + ' words each');
+
+  const output = { book, chapters, pos, pages };
   fs.writeFileSync(OUT_PATH, JSON.stringify(output));
   console.log('Wrote', OUT_PATH, '(' + fs.statSync(OUT_PATH).size + ' bytes)');
 }

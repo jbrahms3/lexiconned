@@ -1,0 +1,28 @@
+/**
+ * Regenerates src/data/chapters.json and src/data/pages.json from the
+ * web app's build/pp_words.json (word identities only — no prose).
+ *
+ * Run after rebuilding ../build/pp_words.json (see the web app's
+ * build/build-data.js):
+ *
+ *   node scripts/gen-data.js
+ */
+const fs = require('fs');
+const path = require('path');
+
+const sourcePath = path.join(__dirname, '..', '..', 'build', 'pp_words.json');
+const data = JSON.parse(fs.readFileSync(sourcePath, 'utf8'));
+
+const chapters = data.chapters.map((c) => ({ num: c.num, words: c.words }));
+fs.writeFileSync(
+  path.join(__dirname, '..', 'src', 'data', 'chapters.json'),
+  JSON.stringify(chapters),
+);
+
+const pages = (data.pages || []).map((p) => ({ num: p.num, words: p.words }));
+fs.writeFileSync(
+  path.join(__dirname, '..', 'src', 'data', 'pages.json'),
+  JSON.stringify(pages),
+);
+
+console.log('Wrote chapters.json (' + chapters.length + ' chapters) and pages.json (' + pages.length + ' pages)');

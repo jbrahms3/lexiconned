@@ -4,13 +4,13 @@ import { colors, fonts, radii, spacing } from '../theme';
 
 interface Props {
   prompt: string;
-  chapter: number;
+  sourceLabel: string;
 }
 
-export function PromptCard({ prompt, chapter }: Props) {
+export function PromptCard({ prompt, sourceLabel }: Props) {
   return (
     <View style={styles.card}>
-      <Text style={styles.kicker}>CHAPTER {chapter} WORDS ONLY</Text>
+      <Text style={styles.kicker}>{sourceLabel}</Text>
       <Text style={styles.prompt}>{prompt}</Text>
     </View>
   );

@@ -252,6 +252,46 @@
   .chapter-block { display: none; }
   .chapter-block.active { display: block; }
 
+  .page-block { display: none; }
+  .page-block.active { display: block; }
+
+  .page-range-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.6rem;
+  }
+
+  .page-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    flex: 1;
+  }
+
+  .page-field span {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.64rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .page-field input {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.95rem;
+    padding: 0.4rem 0.5rem;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    background: var(--paper-raised);
+    color: var(--ink);
+    width: 100%;
+  }
+
+  .page-range-dash {
+    color: var(--ink-faint);
+    padding-bottom: 0.5rem;
+  }
+
   .chapter-actions {
     display: flex;
     gap: 0.5rem;
@@ -823,6 +863,10 @@
               <input type="radio" name="mode" value="chapters">
               <span class="label"><strong>Chosen chapters</strong><span>Restrict to only the chapters you pick</span></span>
             </label>
+            <label class="mode-option">
+              <input type="radio" name="mode" value="pages">
+              <span class="label"><strong>A page range</strong><span>~275 words per page (approximate, not tied to any real edition)</span></span>
+            </label>
           </div>
         </fieldset>
 
@@ -833,6 +877,21 @@
           </div>
           <div class="chapter-grid" id="chapterGrid" role="group" aria-label="Chapters"></div>
           <p class="chapter-summary" id="chapterSummary">0 chapters selected &middot; 0 words available</p>
+        </div>
+
+        <div class="page-block" id="pageBlock">
+          <div class="page-range-row">
+            <label class="page-field">
+              <span>From page</span>
+              <input type="number" id="pageStart" min="1" value="1">
+            </label>
+            <span class="page-range-dash">&ndash;</span>
+            <label class="page-field">
+              <span>To page</span>
+              <input type="number" id="pageEnd" min="1" value="2">
+            </label>
+          </div>
+          <p class="chapter-summary" id="pageSummary">0 words available</p>
         </div>
       </div>
     </aside>
@@ -899,6 +958,7 @@
   const data = JSON.parse(document.getElementById('ppData').textContent);
   const bookWords = new Set(data.book);
   const chapters = data.chapters; // [{num, words: [...] }]
+  const pages = data.pages || []; // [{num, words: [...] }], ~275-word chunks
   const posMap = data.pos || {};
 
   const CATEGORY_ORDER = ['noun', 'proper', 'verb', 'adjective', 'adverb', 'pronoun', 'determiner', 'preposition', 'conjunction', 'interjection', 'number', 'other'];
@@ -919,6 +979,11 @@
   const sealBadge = document.getElementById('sealBadge');
   const flaggedWordsEl = document.getElementById('flaggedWords');
   const flaggedEmpty = document.getElementById('flaggedEmpty');
+
+  const pageBlock = document.getElementById('pageBlock');
+  const pageSummary = document.getElementById('pageSummary');
+  const pageStartInput = document.getElementById('pageStart');
+  const pageEndInput = document.getElementById('pageEnd');
 
   const selectedChapters = new Set();
   let mode = 'book';
@@ -983,25 +1048,57 @@
     rebuildActiveSet();
   });
 
+  pageStartInput.max = pages.length;
+  pageEndInput.max = pages.length;
+  pageEndInput.value = Math.min(2, pages.length);
+
   document.querySelectorAll('input[name="mode"]').forEach(radio => {
     radio.addEventListener('change', (e) => {
       mode = e.target.value;
       chapterBlock.classList.toggle('active', mode === 'chapters');
-      sourceLabel.textContent = mode === 'book' ? 'SOURCE: ENTIRE NOVEL' : 'SOURCE: SELECTED CHAPTERS';
+      pageBlock.classList.toggle('active', mode === 'pages');
+      sourceLabel.textContent = mode === 'book' ? 'SOURCE: ENTIRE NOVEL'
+        : mode === 'chapters' ? 'SOURCE: SELECTED CHAPTERS'
+        : 'SOURCE: PAGE RANGE';
       rebuildActiveSet();
     });
+  });
+
+  function clampPageInputs() {
+    const total = pages.length;
+    let start = Math.round(Number(pageStartInput.value)) || 1;
+    let end = Math.round(Number(pageEndInput.value)) || 1;
+    start = Math.min(Math.max(start, 1), total);
+    end = Math.min(Math.max(end, 1), total);
+    if (end < start) end = start;
+    pageStartInput.value = start;
+    pageEndInput.value = end;
+    return { start, end };
+  }
+
+  [pageStartInput, pageEndInput].forEach(el => {
+    el.addEventListener('change', () => { clampPageInputs(); rebuildActiveSet(); });
   });
 
   function rebuildActiveSet() {
     if (mode === 'book') {
       activeSet = bookWords;
-    } else {
+    } else if (mode === 'chapters') {
       const s = new Set();
       chapters.forEach(ch => {
         if (selectedChapters.has(ch.num)) ch.words.forEach(w => s.add(w));
       });
       activeSet = s;
       chapterSummary.textContent = selectedChapters.size + ' chapter' + (selectedChapters.size === 1 ? '' : 's') + ' selected · ' + s.size.toLocaleString() + ' words available';
+    } else if (mode === 'pages') {
+      const { start, end } = clampPageInputs();
+      const s = new Set();
+      pages.forEach(pg => {
+        if (pg.num >= start && pg.num <= end) pg.words.forEach(w => s.add(w));
+      });
+      activeSet = s;
+      const count = end - start + 1;
+      pageSummary.textContent = 'Page' + (count === 1 ? '' : 's') + ' ' + start + (count === 1 ? '' : '–' + end) + ' · ' + s.size.toLocaleString() + ' words available';
     }
     activeWordsArray = Array.from(activeSet);
     closeSuggestions();

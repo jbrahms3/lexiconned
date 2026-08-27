@@ -19,6 +19,7 @@ import {
 } from '@expo-google-fonts/ibm-plex-mono';
 
 import { GameProvider, useGame } from './src/state/GameContext';
+import { formatSourceLabel } from './src/utils/sourceLabel';
 import { colors } from './src/theme';
 import { PlayersScreen } from './src/screens/PlayersScreen';
 import { PassDeviceScreen } from './src/screens/PassDeviceScreen';
@@ -40,12 +41,12 @@ function Root() {
     case 'pass-answer': {
       const playerId = state.turnOrder[state.turnIndex];
       const player = state.players.find((p) => p.id === playerId);
-      if (!player || !state.currentPrompt || !state.currentChapter) return null;
+      if (!player || !state.currentPrompt || !state.currentSource) return null;
       return (
         <PassDeviceScreen
           playerName={player.name}
           prompt={state.currentPrompt}
-          chapter={state.currentChapter}
+          sourceLabel={formatSourceLabel(state.currentSource)}
           subtitle={`ROUND ${state.round} · YOUR TURN TO ANSWER`}
           buttonLabel="I'm Ready"
           onReady={() => dispatch({ type: 'READY_FOR_ANSWER' })}
@@ -62,12 +63,12 @@ function Root() {
     case 'pass-vote': {
       const voterId = state.turnOrder[state.voteTurnIndex];
       const voter = state.players.find((p) => p.id === voterId);
-      if (!voter || !state.currentPrompt || !state.currentChapter) return null;
+      if (!voter || !state.currentPrompt || !state.currentSource) return null;
       return (
         <PassDeviceScreen
           playerName={voter.name}
           prompt={state.currentPrompt}
-          chapter={state.currentChapter}
+          sourceLabel={formatSourceLabel(state.currentSource)}
           subtitle={`ROUND ${state.round} · YOUR TURN TO VOTE`}
           buttonLabel="I'm Ready"
           onReady={() => dispatch({ type: 'READY_FOR_VOTE' })}

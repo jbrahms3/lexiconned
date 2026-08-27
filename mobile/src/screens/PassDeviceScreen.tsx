@@ -7,13 +7,13 @@ import { PromptCard } from '../components/PromptCard';
 interface Props {
   playerName: string;
   prompt: string;
-  chapter: number;
+  sourceLabel: string;
   subtitle: string;
   buttonLabel: string;
   onReady: () => void;
 }
 
-export function PassDeviceScreen({ playerName, prompt, chapter, subtitle, buttonLabel, onReady }: Props) {
+export function PassDeviceScreen({ playerName, prompt, sourceLabel, subtitle, buttonLabel, onReady }: Props) {
   return (
     <View style={styles.container}>
       <Text style={styles.kicker}>{subtitle}</Text>
@@ -22,7 +22,7 @@ export function PassDeviceScreen({ playerName, prompt, chapter, subtitle, button
 
       <View style={styles.spacer} />
 
-      <PromptCard prompt={prompt} chapter={chapter} />
+      <PromptCard prompt={prompt} sourceLabel={sourceLabel} />
 
       <View style={styles.spacer} />
 

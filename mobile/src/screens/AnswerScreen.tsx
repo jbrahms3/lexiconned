@@ -9,8 +9,9 @@ import {
   View,
 } from 'react-native';
 import { useGame } from '../state/GameContext';
-import { getChapterWords } from '../state/gameReducer';
+import { getWordsForSource } from '../state/gameReducer';
 import { checkText } from '../utils/wordCheck';
+import { formatSourceLabel } from '../utils/sourceLabel';
 import { colors, fonts, radii, spacing } from '../theme';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { PromptCard } from '../components/PromptCard';
@@ -23,11 +24,11 @@ export function AnswerScreen() {
 
   const playerId = state.turnOrder[state.turnIndex];
   const player = state.players.find((p) => p.id === playerId);
-  const chapterWords = useMemo(
-    () => (state.currentChapter ? getChapterWords(state.currentChapter) : []),
-    [state.currentChapter],
+  const sourceWords = useMemo(
+    () => (state.currentSource ? getWordsForSource(state.currentSource) : []),
+    [state.currentSource],
   );
-  const allowedSet = useMemo(() => new Set(chapterWords), [chapterWords]);
+  const allowedSet = useMemo(() => new Set(sourceWords), [sourceWords]);
   const check = useMemo(() => checkText(text, allowedSet), [text, allowedSet]);
 
   const canSubmit = text.trim().length > 0 && check.flaggedWords.length === 0;
@@ -38,7 +39,8 @@ export function AnswerScreen() {
     setText('');
   }
 
-  if (!player || !state.currentPrompt || !state.currentChapter) return null;
+  if (!player || !state.currentPrompt || !state.currentSource) return null;
+  const sourceLabel = formatSourceLabel(state.currentSource);
 
   return (
     <KeyboardAvoidingView
@@ -47,7 +49,7 @@ export function AnswerScreen() {
     >
       <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
         <Text style={styles.kicker}>{player.name.toUpperCase()}'S TURN</Text>
-        <PromptCard prompt={state.currentPrompt} chapter={state.currentChapter} />
+        <PromptCard prompt={state.currentPrompt} sourceLabel={sourceLabel} />
 
         <TextInput
           style={styles.input}
@@ -62,7 +64,7 @@ export function AnswerScreen() {
           <Text style={styles.statusText}>
             {check.totalWords} word{check.totalWords === 1 ? '' : 's'}
             {check.flaggedWords.length > 0 && (
-              <Text style={styles.flaggedText}> · {check.flaggedWords.length} not in chapter</Text>
+              <Text style={styles.flaggedText}> · {check.flaggedWords.length} not allowed</Text>
             )}
           </Text>
           <Text style={styles.wordBankLink} onPress={() => setBankVisible(true)}>
@@ -72,7 +74,7 @@ export function AnswerScreen() {
 
         {check.flaggedWords.length > 0 && (
           <View style={styles.flaggedBox}>
-            <Text style={styles.flaggedTitle}>Not found in Chapter {state.currentChapter}:</Text>
+            <Text style={styles.flaggedTitle}>Not found in the {sourceLabel.replace(' WORDS ONLY', '').toLowerCase()}:</Text>
             <Text style={styles.flaggedWords}>{check.flaggedWords.join(', ')}</Text>
           </View>
         )}
@@ -87,7 +89,7 @@ export function AnswerScreen() {
 
       <WordBankSheet
         visible={bankVisible}
-        words={chapterWords}
+        words={sourceWords}
         onClose={() => setBankVisible(false)}
         onSelect={(word) => setText((prev) => (prev.length > 0 && !prev.endsWith(' ') ? prev + ' ' + word + ' ' : prev + word + ' '))}
       />
