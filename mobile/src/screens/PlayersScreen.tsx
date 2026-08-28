@@ -68,6 +68,30 @@ export function PlayersScreen() {
         <Text style={styles.spicyHint}>Adults only — exes, hangovers, and bad decisions ahead.</Text>
       )}
 
+      <Text style={styles.sectionLabel}>VOCABULARY SOURCE</Text>
+      <View style={styles.pageCountToggle}>
+        {([
+          { mode: 'shared' as const, label: 'Same Pages' },
+          { mode: 'perPlayer' as const, label: 'Different Pages' },
+        ]).map(({ mode, label }) => {
+          const isActive = state.sourceMode === mode;
+          return (
+            <Pressable
+              key={mode}
+              style={[styles.pageCountBtn, isActive && styles.pageCountBtnActive]}
+              onPress={() => dispatch({ type: 'SET_SOURCE_MODE', mode })}
+            >
+              <Text style={[styles.pageCountLabel, isActive && styles.pageCountLabelActive]}>{label}</Text>
+            </Pressable>
+          );
+        })}
+      </View>
+      <Text style={styles.helperText}>
+        {state.sourceMode === 'shared'
+          ? 'Everyone writes with the same rolled pages each round.'
+          : 'Each player rolls their own pages right before their turn.'}
+      </Text>
+
       <Text style={styles.sectionLabel}>PLAYERS ({state.players.length})</Text>
 
       <FlatList
@@ -181,6 +205,13 @@ const styles = StyleSheet.create({
   pageCountToggle: {
     flexDirection: 'row',
     gap: spacing.xs,
+    marginBottom: spacing.md,
+  },
+  helperText: {
+    fontFamily: fonts.bodyItalic,
+    fontSize: 12,
+    color: colors.textFaint,
+    marginTop: -spacing.xs,
     marginBottom: spacing.md,
   },
   pageCountBtn: {

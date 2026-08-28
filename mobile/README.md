@@ -3,13 +3,20 @@
 A party game built with Expo/React Native, sharing its vocabulary data with
 the [Longbourn Lexicon](../README.md) web app.
 
-Each round opens with a slot-machine-style roll: two page-number reels spin
-and land on two independently-picked pages (not necessarily next to each
-other) from *Pride and Prejudice* — that pair becomes the round's
-vocabulary. A random prompt is paired with it, players take turns answering
-using only words found on those pages, everyone's answers are revealed
-anonymously, and the group votes for their favorite. Points accumulate
-across rounds.
+Each round opens with a slot-machine-style roll: page-number reels spin and
+land on independently-picked pages (not necessarily next to each other)
+from *Pride and Prejudice* — that becomes the round's vocabulary. A random
+prompt is paired with it, players take turns answering using only words
+found on those pages, everyone's answers are revealed anonymously, and the
+group votes for their favorite. Points accumulate across rounds.
+
+By default everyone shares one roll per round (**Same Pages**). Toggle to
+**Different Pages** on the players screen and instead each player gets
+their own fresh roll right before their turn — the pass-device screen
+already shows a roll first, so this just means every hand-off rolls again
+instead of reusing the round's source. Voting and reveal screens note that
+answers used different pages rather than showing one (now meaningless)
+shared source; round results show each answer's own pages underneath it.
 
 ## Pages vs. chapters
 

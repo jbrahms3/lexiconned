@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useGame } from '../state/GameContext';
 import { colors, fonts, playerColor, radii, spacing } from '../theme';
 import { PrimaryButton } from '../components/PrimaryButton';
+import { formatSourceLabel } from '../utils/sourceLabel';
 
 export function RoundResultsScreen() {
   const { state, dispatch } = useGame();
@@ -32,6 +33,9 @@ export function RoundResultsScreen() {
                 </Text>
               </View>
               <Text style={styles.answerText}>{answer?.text}</Text>
+              {state.sourceMode === 'perPlayer' && answer && (
+                <Text style={styles.sourceNote}>{formatSourceLabel(answer.source)}</Text>
+              )}
             </View>
           );
         })}
@@ -119,6 +123,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 22,
     color: colors.text,
+  },
+  sourceNote: {
+    fontFamily: fonts.monoRegular,
+    fontSize: 10,
+    color: colors.textFaint,
+    marginTop: 4,
   },
   scoreboardTitle: {
     fontFamily: fonts.mono,

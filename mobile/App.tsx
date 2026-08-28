@@ -77,7 +77,11 @@ function Root() {
           playerName={voter.name}
           playerIndex={voterIndex}
           prompt={state.currentPrompt}
-          sourceLabel={formatSourceLabel(state.currentSource)}
+          sourceLabel={
+            state.sourceMode === 'perPlayer'
+              ? 'EACH ANSWER USED ITS OWN PAGES'
+              : formatSourceLabel(state.currentSource)
+          }
           subtitle={`ROUND ${state.round} · YOUR TURN TO VOTE`}
           buttonLabel="I'm Ready"
           onReady={() => dispatch({ type: 'READY_FOR_VOTE' })}

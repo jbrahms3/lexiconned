@@ -7,6 +7,7 @@ export interface Player {
 export interface Answer {
   playerId: string;
   text: string;
+  source: RoundSource; // the vocabulary source this particular answer was written against
 }
 
 export interface Vote {
@@ -38,14 +39,22 @@ export type RoundSource =
 
 export type PromptMode = 'classic' | 'spicy';
 
+/**
+ * 'shared' — one roll per round, every player writes against the same
+ * source. 'perPlayer' — a fresh roll happens right before each player's
+ * turn, so everyone answers against their own pages.
+ */
+export type SourceMode = 'shared' | 'perPlayer';
+
 export interface GameState {
   phase: Phase;
   players: Player[];
   round: number;
   promptMode: PromptMode; // set on the players screen, before rolling starts
+  sourceMode: SourceMode; // set on the players screen, before rolling starts
   usedPromptIndices: number[];
   currentPrompt: string | null;
-  currentSource: RoundSource | null;
+  currentSource: RoundSource | null; // the source for whoever is currently rolling/answering
   pagesPerRound: 1 | 2; // set on the players screen, before rolling starts
   turnOrder: string[]; // player ids, order for answering this round
   turnIndex: number;
@@ -65,3 +74,5 @@ export const ROUND_SOURCE_MODE: 'chapter' | 'pages' = 'pages';
 export const DEFAULT_PAGES_PER_ROUND: 1 | 2 = 2;
 // Default for GameState.promptMode, used until the players screen toggle changes it.
 export const DEFAULT_PROMPT_MODE: PromptMode = 'classic';
+// Default for GameState.sourceMode, used until the players screen toggle changes it.
+export const DEFAULT_SOURCE_MODE: SourceMode = 'shared';

@@ -1,4 +1,4 @@
-import { GameState, Player, PromptMode, RoundSource, ROUND_SOURCE_MODE, DEFAULT_PAGES_PER_ROUND, DEFAULT_PROMPT_MODE } from './types';
+import { GameState, Player, PromptMode, RoundSource, SourceMode, ROUND_SOURCE_MODE, DEFAULT_PAGES_PER_ROUND, DEFAULT_PROMPT_MODE, DEFAULT_SOURCE_MODE } from './types';
 import { PROMPTS } from '../data/prompts';
 import { SPICY_PROMPTS } from '../data/spicyPrompts';
 import chaptersData from '../data/chapters.json';
@@ -72,6 +72,7 @@ export const initialState: GameState = {
   players: [],
   round: 0,
   promptMode: DEFAULT_PROMPT_MODE,
+  sourceMode: DEFAULT_SOURCE_MODE,
   usedPromptIndices: [],
   currentPrompt: null,
   currentSource: null,
@@ -90,6 +91,7 @@ export type Action =
   | { type: 'REMOVE_PLAYER'; id: string }
   | { type: 'SET_PAGES_PER_ROUND'; count: 1 | 2 }
   | { type: 'SET_PROMPT_MODE'; mode: PromptMode }
+  | { type: 'SET_SOURCE_MODE'; mode: SourceMode }
   | { type: 'START_GAME' }
   | { type: 'ROLL_COMPLETE' }
   | { type: 'READY_FOR_ANSWER' }
@@ -144,6 +146,10 @@ export function gameReducer(state: GameState, action: Action): GameState {
       return { ...state, promptMode: action.mode, usedPromptIndices: [] };
     }
 
+    case 'SET_SOURCE_MODE': {
+      return { ...state, sourceMode: action.mode };
+    }
+
     case 'START_GAME': {
       if (state.players.length < 2) return state;
       return startRound(state, 1);
@@ -158,8 +164,9 @@ export function gameReducer(state: GameState, action: Action): GameState {
     }
 
     case 'SUBMIT_ANSWER': {
+      if (!state.currentSource) return state;
       const playerId = state.turnOrder[state.turnIndex];
-      const answers = [...state.answers, { playerId, text: action.text }];
+      const answers = [...state.answers, { playerId, text: action.text, source: state.currentSource }];
       const nextIndex = state.turnIndex + 1;
       if (nextIndex >= state.turnOrder.length) {
         return {
@@ -168,6 +175,16 @@ export function gameReducer(state: GameState, action: Action): GameState {
           turnIndex: nextIndex,
           phase: 'reveal',
           revealOrder: shuffle(state.turnOrder),
+        };
+      }
+      if (state.sourceMode === 'perPlayer') {
+        // Roll fresh for the next player before showing their pass-device screen.
+        return {
+          ...state,
+          answers,
+          turnIndex: nextIndex,
+          phase: 'rolling',
+          currentSource: pickRoundSource(state.pagesPerRound),
         };
       }
       return { ...state, answers, turnIndex: nextIndex, phase: 'pass-answer' };

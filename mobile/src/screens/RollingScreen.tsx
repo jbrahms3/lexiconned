@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
 import { useGame } from '../state/GameContext';
 import { CHAPTER_COUNT, PAGE_COUNT } from '../state/gameReducer';
-import { colors, fonts, PLAYER_COLORS, radii, spacing } from '../theme';
+import { colors, fonts, playerColor, PLAYER_COLORS, radii, spacing } from '../theme';
 import { PrimaryButton } from '../components/PrimaryButton';
 
 interface ReelProps {
@@ -75,14 +75,21 @@ export function RollingScreen() {
   const maxValue = source?.type === 'pages' ? PAGE_COUNT : CHAPTER_COUNT;
   const allSettled = reels.length > 0 && settledCount >= reels.length;
 
+  const rollingPlayerId = state.turnOrder[state.turnIndex];
+  const rollingPlayer = state.players.find((p) => p.id === rollingPlayerId);
+  const rollingPlayerIndex = state.players.findIndex((p) => p.id === rollingPlayerId);
+  const isPerPlayer = state.sourceMode === 'perPlayer' && rollingPlayer;
+  const accent = isPerPlayer ? playerColor(rollingPlayerIndex) : colors.text;
+
   if (!source) return null;
+
+  const unit = source.type === 'pages' ? 'pages' : 'a chapter';
+  const title = isPerPlayer ? `Rolling ${rollingPlayer!.name}'s ${unit}…` : `Rolling for ${unit}…`;
 
   return (
     <View style={styles.container}>
       <Text style={styles.kicker}>ROUND {state.round}</Text>
-      <Text style={styles.title}>
-        {source.type === 'pages' ? 'Rolling for pages…' : 'Rolling for a chapter…'}
-      </Text>
+      <Text style={[styles.title, { color: accent }]}>{title}</Text>
 
       <View style={styles.reelsRow}>
         {reels.map((reel, i) => (
@@ -91,7 +98,7 @@ export function RollingScreen() {
             finalValue={reel.value}
             label={reel.label}
             maxValue={maxValue}
-            color={PLAYER_COLORS[i % PLAYER_COLORS.length]}
+            color={isPerPlayer ? accent : PLAYER_COLORS[i % PLAYER_COLORS.length]}
             spinDurationMs={1100 + i * 500}
             onSettle={() => setSettledCount((c) => c + 1)}
           />
@@ -102,6 +109,7 @@ export function RollingScreen() {
         <PrimaryButton
           label="Let's Go"
           onPress={() => dispatch({ type: 'ROLL_COMPLETE' })}
+          color={isPerPlayer ? accent : undefined}
           style={styles.button}
         />
       )}
