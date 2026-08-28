@@ -1,16 +1,19 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
   KeyboardAvoidingView,
+  NativeSyntheticEvent,
   Platform,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
+  TextInputSelectionChangeEventData,
   View,
 } from 'react-native';
 import { useGame } from '../state/GameContext';
 import { getWordsForSource } from '../state/gameReducer';
-import { checkText } from '../utils/wordCheck';
+import { checkText, currentWordPrefix, suggestWords } from '../utils/wordCheck';
 import { formatSourceLabel } from '../utils/sourceLabel';
 import { colors, fonts, playerColor, radii, spacing } from '../theme';
 import { PrimaryButton } from '../components/PrimaryButton';
@@ -20,7 +23,9 @@ import { WordBankSheet } from '../components/WordBankSheet';
 export function AnswerScreen() {
   const { state, dispatch } = useGame();
   const [text, setText] = useState('');
+  const [selection, setSelection] = useState({ start: 0, end: 0 });
   const [bankVisible, setBankVisible] = useState(false);
+  const inputRef = useRef<TextInput>(null);
 
   const playerId = state.turnOrder[state.turnIndex];
   const player = state.players.find((p) => p.id === playerId);
@@ -33,12 +38,54 @@ export function AnswerScreen() {
   const allowedSet = useMemo(() => new Set(sourceWords), [sourceWords]);
   const check = useMemo(() => checkText(text, allowedSet), [text, allowedSet]);
 
+  const wordInProgress = useMemo(
+    () => (selection.start === selection.end ? currentWordPrefix(text, selection.start) : null),
+    [text, selection],
+  );
+  const suggestions = useMemo(() => {
+    if (!wordInProgress || !wordInProgress.prefix) return [];
+    const matches = suggestWords(wordInProgress.prefix, sourceWords);
+    // Nothing to suggest if the only match is the word already fully typed.
+    if (matches.length === 1 && matches[0] === wordInProgress.prefix && wordInProgress.start === selection.start) {
+      return [];
+    }
+    return matches;
+  }, [wordInProgress, sourceWords, selection.start]);
+
   const canSubmit = text.trim().length > 0 && check.flaggedWords.length === 0;
 
   function submit() {
     if (!canSubmit) return;
     dispatch({ type: 'SUBMIT_ANSWER', text: text.trim() });
     setText('');
+    setSelection({ start: 0, end: 0 });
+  }
+
+  function acceptSuggestion(word: string) {
+    if (!wordInProgress) return;
+    const { start } = wordInProgress;
+    const end = selection.start;
+    const before = text.slice(0, start);
+    const after = text.slice(end);
+    let insert = word;
+    if (after.length === 0 || !/\s/.test(after[0])) insert += ' ';
+    const newText = before + insert + after;
+    const newCursor = before.length + insert.length;
+    setText(newText);
+    setSelection({ start: newCursor, end: newCursor });
+    inputRef.current?.focus();
+  }
+
+  function handleSelectionChange(e: NativeSyntheticEvent<TextInputSelectionChangeEventData>) {
+    setSelection(e.nativeEvent.selection);
+  }
+
+  function insertFromWordBank(word: string) {
+    setText((prev) => {
+      const next = prev.length > 0 && !prev.endsWith(' ') ? prev + ' ' + word + ' ' : prev + word + ' ';
+      setSelection({ start: next.length, end: next.length });
+      return next;
+    });
   }
 
   if (!player || !state.currentPrompt || !state.currentSource) return null;
@@ -54,13 +101,32 @@ export function AnswerScreen() {
         <PromptCard prompt={state.currentPrompt} sourceLabel={sourceLabel} accentColor={accent} />
 
         <TextInput
+          ref={inputRef}
           style={styles.input}
           multiline
           placeholder="Type your answer here…"
           placeholderTextColor={colors.textFaint}
           value={text}
           onChangeText={setText}
+          onSelectionChange={handleSelectionChange}
         />
+
+        {suggestions.length > 0 && (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.suggestRow}
+            contentContainerStyle={styles.suggestContent}
+            keyboardShouldPersistTaps="handled"
+          >
+            {suggestions.map((word) => (
+              <Pressable key={word} style={styles.suggestChip} onPress={() => acceptSuggestion(word)}>
+                <Text style={styles.suggestPrefix}>{wordInProgress?.prefix}</Text>
+                <Text style={styles.suggestRest}>{word.slice(wordInProgress?.prefix.length || 0)}</Text>
+              </Pressable>
+            ))}
+          </ScrollView>
+        )}
 
         <View style={styles.statusRow}>
           <Text style={styles.statusText}>
@@ -94,7 +160,7 @@ export function AnswerScreen() {
         visible={bankVisible}
         words={sourceWords}
         onClose={() => setBankVisible(false)}
-        onSelect={(word) => setText((prev) => (prev.length > 0 && !prev.endsWith(' ') ? prev + ' ' + word + ' ' : prev + word + ' '))}
+        onSelect={insertFromWordBank}
       />
     </KeyboardAvoidingView>
   );
@@ -128,6 +194,31 @@ const styles = StyleSheet.create({
     lineHeight: 26,
     color: colors.text,
     textAlignVertical: 'top',
+  },
+  suggestRow: {
+    flexGrow: 0,
+    marginTop: spacing.xs,
+  },
+  suggestContent: {
+    gap: 6,
+    paddingVertical: 2,
+  },
+  suggestChip: {
+    flexDirection: 'row',
+    backgroundColor: colors.chipBg,
+    borderRadius: radii.pill,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+  },
+  suggestPrefix: {
+    fontFamily: fonts.bodyMedium,
+    fontSize: 14,
+    color: colors.primaryStrong,
+  },
+  suggestRest: {
+    fontFamily: fonts.body,
+    fontSize: 14,
+    color: colors.textSoft,
   },
   statusRow: {
     flexDirection: 'row',
