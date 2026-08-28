@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, View } from 'react-native';
+import { FlatList, KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useGame } from '../state/GameContext';
 import { colors, fonts, playerColor, radii, spacing } from '../theme';
 import { PrimaryButton } from '../components/PrimaryButton';
@@ -25,6 +25,24 @@ export function PlayersScreen() {
         Answer party prompts using only words from a random page or two of{' '}
         <Text style={styles.italic}>Pride and Prejudice</Text>.
       </Text>
+
+      <Text style={styles.sectionLabel}>PAGES PER ROUND</Text>
+      <View style={styles.pageCountToggle}>
+        {([1, 2] as const).map((count) => {
+          const isActive = state.pagesPerRound === count;
+          return (
+            <Pressable
+              key={count}
+              style={[styles.pageCountBtn, isActive && styles.pageCountBtnActive]}
+              onPress={() => dispatch({ type: 'SET_PAGES_PER_ROUND', count })}
+            >
+              <Text style={[styles.pageCountLabel, isActive && styles.pageCountLabelActive]}>
+                {count} Page{count === 1 ? '' : 's'}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
 
       <Text style={styles.sectionLabel}>PLAYERS ({state.players.length})</Text>
 
@@ -112,6 +130,32 @@ const styles = StyleSheet.create({
     letterSpacing: 1.5,
     color: colors.textFaint,
     marginBottom: spacing.sm,
+  },
+  pageCountToggle: {
+    flexDirection: 'row',
+    gap: spacing.xs,
+    marginBottom: spacing.md,
+  },
+  pageCountBtn: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: spacing.sm,
+    borderRadius: radii.sm,
+    borderWidth: 2,
+    borderColor: colors.border,
+    backgroundColor: colors.surfaceRaised,
+  },
+  pageCountBtnActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  pageCountLabel: {
+    fontFamily: fonts.bodyMedium,
+    fontSize: 15,
+    color: colors.textSoft,
+  },
+  pageCountLabelActive: {
+    color: colors.onPrimary,
   },
   list: {
     flexGrow: 0,

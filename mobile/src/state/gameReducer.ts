@@ -1,4 +1,4 @@
-import { GameState, Player, RoundSource, ROUND_SOURCE_MODE, PAGES_PER_ROUND } from './types';
+import { GameState, Player, RoundSource, ROUND_SOURCE_MODE, DEFAULT_PAGES_PER_ROUND } from './types';
 import { PROMPTS } from '../data/prompts';
 import chaptersData from '../data/chapters.json';
 import pagesData from '../data/pages.json';
@@ -42,11 +42,11 @@ function pickDistinctPages(count: number): number[] {
   return Array.from(nums).sort((a, b) => a - b);
 }
 
-function pickRoundSource(): RoundSource {
+function pickRoundSource(pagesPerRound: number): RoundSource {
   if (ROUND_SOURCE_MODE === 'chapter') {
     return { type: 'chapter', num: Math.floor(Math.random() * CHAPTER_COUNT) + 1 };
   }
-  return { type: 'pages', nums: pickDistinctPages(PAGES_PER_ROUND) };
+  return { type: 'pages', nums: pickDistinctPages(pagesPerRound) };
 }
 
 export function getWordsForSource(source: RoundSource): string[] {
@@ -68,6 +68,7 @@ export const initialState: GameState = {
   usedPromptIndices: [],
   currentPrompt: null,
   currentSource: null,
+  pagesPerRound: DEFAULT_PAGES_PER_ROUND,
   turnOrder: [],
   turnIndex: 0,
   answers: [],
@@ -80,6 +81,7 @@ export const initialState: GameState = {
 export type Action =
   | { type: 'ADD_PLAYER'; name: string }
   | { type: 'REMOVE_PLAYER'; id: string }
+  | { type: 'SET_PAGES_PER_ROUND'; count: 1 | 2 }
   | { type: 'START_GAME' }
   | { type: 'ROLL_COMPLETE' }
   | { type: 'READY_FOR_ANSWER' }
@@ -93,7 +95,7 @@ export type Action =
 
 function startRound(state: GameState, round: number): GameState {
   const { text, used } = pickPrompt(state.usedPromptIndices);
-  const source = pickRoundSource();
+  const source = pickRoundSource(state.pagesPerRound);
   const turnOrder = shuffle(state.players.map((p) => p.id));
   return {
     ...state,
@@ -123,6 +125,10 @@ export function gameReducer(state: GameState, action: Action): GameState {
 
     case 'REMOVE_PLAYER': {
       return { ...state, players: state.players.filter((p) => p.id !== action.id) };
+    }
+
+    case 'SET_PAGES_PER_ROUND': {
+      return { ...state, pagesPerRound: action.count };
     }
 
     case 'START_GAME': {

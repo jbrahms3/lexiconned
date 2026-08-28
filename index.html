@@ -255,6 +255,41 @@
   .page-block { display: none; }
   .page-block.active { display: block; }
 
+  .page-count-toggle {
+    display: flex;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 0.7rem;
+    width: fit-content;
+  }
+
+  .page-count-btn {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.4rem 0.75rem;
+    background: transparent;
+    color: var(--ink-soft);
+    border: none;
+    cursor: pointer;
+  }
+
+  .page-count-btn + .page-count-btn {
+    border-left: 1px solid var(--rule);
+  }
+
+  .page-count-btn.active {
+    background: var(--chip-bg-active);
+    color: var(--chip-fg-active);
+  }
+
+  .page-count-btn:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
   .page-range-row {
     display: flex;
     align-items: flex-end;
@@ -957,13 +992,17 @@
         </div>
 
         <div class="page-block" id="pageBlock">
+          <div class="page-count-toggle" id="pageCountToggle">
+            <button type="button" class="page-count-btn" data-count="1">1 Page</button>
+            <button type="button" class="page-count-btn active" data-count="2">2 Pages</button>
+          </div>
           <div class="page-range-row">
             <label class="page-field">
-              <span>From page</span>
+              <span id="pageStartLabel">From page</span>
               <input type="number" id="pageStart" min="1" value="1">
             </label>
-            <span class="page-range-dash">&ndash;</span>
-            <label class="page-field">
+            <span class="page-range-dash" id="pageRangeDash">&ndash;</span>
+            <label class="page-field" id="pageEndField">
               <span>To page</span>
               <input type="number" id="pageEnd" min="1" value="2">
             </label>
@@ -1065,8 +1104,13 @@
 
   const pageBlock = document.getElementById('pageBlock');
   const pageSummary = document.getElementById('pageSummary');
+  const pageCountToggle = document.getElementById('pageCountToggle');
   const pageStartInput = document.getElementById('pageStart');
   const pageEndInput = document.getElementById('pageEnd');
+  const pageEndField = document.getElementById('pageEndField');
+  const pageRangeDash = document.getElementById('pageRangeDash');
+  const pageStartLabel = document.getElementById('pageStartLabel');
+  let pageCount = 2;
 
   const selectedChapters = new Set();
   let mode = 'book';
@@ -1156,14 +1200,33 @@
   function clampPageInputs() {
     const total = pages.length;
     let start = Math.round(Number(pageStartInput.value)) || 1;
-    let end = Math.round(Number(pageEndInput.value)) || 1;
     start = Math.min(Math.max(start, 1), total);
-    end = Math.min(Math.max(end, 1), total);
-    if (end < start) end = start;
+    let end;
+    if (pageCount === 1) {
+      end = start;
+    } else {
+      end = Math.round(Number(pageEndInput.value)) || 1;
+      end = Math.min(Math.max(end, 1), total);
+      if (end < start) end = start;
+    }
     pageStartInput.value = start;
     pageEndInput.value = end;
     return { start, end };
   }
+
+  Array.from(pageCountToggle.children).forEach(btn => {
+    btn.addEventListener('click', () => {
+      const count = Number(btn.dataset.count);
+      if (count === pageCount) return;
+      pageCount = count;
+      Array.from(pageCountToggle.children).forEach(b => b.classList.toggle('active', b === btn));
+      pageEndField.hidden = pageCount === 1;
+      pageRangeDash.hidden = pageCount === 1;
+      pageStartLabel.textContent = pageCount === 1 ? 'Page' : 'From page';
+      clampPageInputs();
+      rebuildActiveSet();
+    });
+  });
 
   [pageStartInput, pageEndInput].forEach(el => {
     el.addEventListener('change', () => { clampPageInputs(); rebuildActiveSet(); });

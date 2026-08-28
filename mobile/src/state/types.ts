@@ -43,6 +43,7 @@ export interface GameState {
   usedPromptIndices: number[];
   currentPrompt: string | null;
   currentSource: RoundSource | null;
+  pagesPerRound: 1 | 2; // set on the players screen, before rolling starts
   turnOrder: string[]; // player ids, order for answering this round
   turnIndex: number;
   answers: Answer[];
@@ -55,7 +56,7 @@ export interface GameState {
 export const TOTAL_ROUNDS_DEFAULT = 5;
 
 // Which round unit new rounds use. Flip to 'chapter' to go back to
-// whole-chapter rounds.
+// whole-chapter rounds (pagesPerRound has no effect in that mode).
 export const ROUND_SOURCE_MODE: 'chapter' | 'pages' = 'pages';
-// How many pages make up one round's vocabulary when ROUND_SOURCE_MODE is 'pages'.
-export const PAGES_PER_ROUND = 2;
+// Default for GameState.pagesPerRound, used until the players screen toggle changes it.
+export const DEFAULT_PAGES_PER_ROUND: 1 | 2 = 2;
