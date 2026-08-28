@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useNetworkGame } from '../../state/NetworkGameContext';
 import { sourceForPlayer } from '../../state/networkTypes';
 import { PAGE_COUNT, CHAPTER_COUNT } from '../../state/gameReducer';
 import { colors, fonts, playerColor, PLAYER_COLORS, spacing } from '../../theme';
 import { RollingReel } from '../../components/RollingReel';
+import { RandomIllustration } from '../../components/Illustration';
 
 export function NetworkRollingScreen() {
   const { roomState, playerId } = useNetworkGame();
@@ -28,9 +29,11 @@ export function NetworkRollingScreen() {
   const title = isPerPlayer ? `Rolling ${unit}…` : `Rolling for ${source.type === 'pages' ? 'pages' : 'a chapter'}…`;
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.kicker}>ROUND {roomState.round}</Text>
       <Text style={[styles.title, { color: accent }]}>{title}</Text>
+
+      <RandomIllustration />
 
       <View style={styles.reelsRow}>
         {reels.map((reel, i) => (
@@ -47,13 +50,13 @@ export function NetworkRollingScreen() {
       </View>
 
       {settledCount >= reels.length && <Text style={styles.waitHint}>Get ready…</Text>}
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: colors.bg,
     padding: spacing.lg,
     justifyContent: 'center',
@@ -71,13 +74,14 @@ const styles = StyleSheet.create({
     color: colors.text,
     textAlign: 'center',
     marginTop: spacing.xs,
-    marginBottom: spacing.xl,
+    marginBottom: spacing.lg,
   },
   reelsRow: {
     flexDirection: 'row',
     gap: spacing.md,
     justifyContent: 'center',
     flexWrap: 'wrap',
+    marginTop: spacing.lg,
   },
   waitHint: {
     fontFamily: fonts.bodyItalic,

@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useGame } from '../state/GameContext';
 import { CHAPTER_COUNT, PAGE_COUNT } from '../state/gameReducer';
 import { colors, fonts, playerColor, PLAYER_COLORS, spacing } from '../theme';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { RollingReel } from '../components/RollingReel';
+import { RandomIllustration } from '../components/Illustration';
 
 export function RollingScreen() {
   const { state, dispatch } = useGame();
@@ -33,9 +34,11 @@ export function RollingScreen() {
   const title = isPerPlayer ? `Rolling ${rollingPlayer!.name}'s ${unit}…` : `Rolling for ${unit}…`;
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.kicker}>ROUND {state.round}</Text>
       <Text style={[styles.title, { color: accent }]}>{title}</Text>
+
+      <RandomIllustration />
 
       <View style={styles.reelsRow}>
         {reels.map((reel, i) => (
@@ -59,13 +62,13 @@ export function RollingScreen() {
           style={styles.button}
         />
       )}
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: colors.bg,
     padding: spacing.lg,
     justifyContent: 'center',
@@ -83,13 +86,14 @@ const styles = StyleSheet.create({
     color: colors.text,
     textAlign: 'center',
     marginTop: spacing.xs,
-    marginBottom: spacing.xl,
+    marginBottom: spacing.lg,
   },
   reelsRow: {
     flexDirection: 'row',
     gap: spacing.md,
     justifyContent: 'center',
     flexWrap: 'wrap',
+    marginTop: spacing.lg,
   },
   button: {
     marginTop: spacing.xl,

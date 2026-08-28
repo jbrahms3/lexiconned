@@ -89,6 +89,16 @@ simulator/emulator.
 - `src/components/RollingReel.tsx` — the slot-machine-style single reel
   (spins through random numbers, settles on a value); shared by both
   modes' rolling screens.
+- `src/components/Illustration.tsx` + `assets/illustrations/` — a public
+  domain Hugh Thomson illustration from the 1894 George Allen edition
+  (the same illustrated edition Project Gutenberg #1342 comes from),
+  shown on the rolling screen in both modes. Currently just one; add more
+  `.jpg` files to `assets/illustrations/` and list them in
+  `ILLUSTRATIONS` in `Illustration.tsx` to pick among them at random.
+  Public domain: published 1894, artist died 1920 (expired in the US as
+  pre-1929, and in the UK at life+70 in 1990) — the "Copyright 1894 by
+  George Allen" text visible on the scans is the original, long-lapsed
+  claim, not a current one.
 - `src/components/` — other shared UI: buttons, the prompt card, the word
   bank bottom sheet.
 - `src/data/prompts.ts`, `src/data/spicyPrompts.ts` — the two curated
