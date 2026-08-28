@@ -36,10 +36,13 @@ export type RoundSource =
   | { type: 'chapter'; num: number }
   | { type: 'pages'; nums: number[] };
 
+export type PromptMode = 'classic' | 'spicy';
+
 export interface GameState {
   phase: Phase;
   players: Player[];
   round: number;
+  promptMode: PromptMode; // set on the players screen, before rolling starts
   usedPromptIndices: number[];
   currentPrompt: string | null;
   currentSource: RoundSource | null;
@@ -60,3 +63,5 @@ export const TOTAL_ROUNDS_DEFAULT = 5;
 export const ROUND_SOURCE_MODE: 'chapter' | 'pages' = 'pages';
 // Default for GameState.pagesPerRound, used until the players screen toggle changes it.
 export const DEFAULT_PAGES_PER_ROUND: 1 | 2 = 2;
+// Default for GameState.promptMode, used until the players screen toggle changes it.
+export const DEFAULT_PROMPT_MODE: PromptMode = 'classic';

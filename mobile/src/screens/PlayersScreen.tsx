@@ -44,6 +44,30 @@ export function PlayersScreen() {
         })}
       </View>
 
+      <View style={styles.sectionLabelRow}>
+        <Text style={styles.sectionLabel}>PROMPT STYLE</Text>
+        {state.promptMode === 'spicy' && <Text style={styles.ageBadge}>18+</Text>}
+      </View>
+      <View style={styles.pageCountToggle}>
+        {(['classic', 'spicy'] as const).map((mode) => {
+          const isActive = state.promptMode === mode;
+          return (
+            <Pressable
+              key={mode}
+              style={[styles.pageCountBtn, isActive && styles.pageCountBtnActive]}
+              onPress={() => dispatch({ type: 'SET_PROMPT_MODE', mode })}
+            >
+              <Text style={[styles.pageCountLabel, isActive && styles.pageCountLabelActive]}>
+                {mode === 'classic' ? 'Classic' : 'Raunchy'}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
+      {state.promptMode === 'spicy' && (
+        <Text style={styles.spicyHint}>Adults only — exes, hangovers, and bad decisions ahead.</Text>
+      )}
+
       <Text style={styles.sectionLabel}>PLAYERS ({state.players.length})</Text>
 
       <FlatList
@@ -130,6 +154,29 @@ const styles = StyleSheet.create({
     letterSpacing: 1.5,
     color: colors.textFaint,
     marginBottom: spacing.sm,
+  },
+  sectionLabelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
+  ageBadge: {
+    fontFamily: fonts.mono,
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: colors.onPrimary,
+    backgroundColor: colors.flag,
+    borderRadius: radii.pill,
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    marginBottom: spacing.sm,
+  },
+  spicyHint: {
+    fontFamily: fonts.bodyItalic,
+    fontSize: 12,
+    color: colors.flag,
+    marginTop: -spacing.xs,
+    marginBottom: spacing.md,
   },
   pageCountToggle: {
     flexDirection: 'row',

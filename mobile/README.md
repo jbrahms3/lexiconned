@@ -23,6 +23,15 @@ automatically (one reel instead of two). "Pages" are an approximation
 numbers) — see the web app's `build/build-data.js` for how they're
 generated.
 
+## Prompt style
+
+The players screen has a Classic / Raunchy toggle (`promptMode` in game
+state, `src/data/prompts.ts` vs. `src/data/spicyPrompts.ts`). Raunchy is
+18+, original Cards-Against-Humanity-style adult party prompts (exes,
+hangovers, bad decisions) — not derived from any other game's actual
+cards. Switching modes resets which prompts have already been used, since
+the two pools are tracked separately.
+
 ## Current mode: hotseat
 
 Right now the game is **pass-and-play**: one phone is shared between all
@@ -61,8 +70,9 @@ simulator/emulator.
   source that was already picked.
 - `src/components/` — shared UI: buttons, the prompt card, the word bank
   bottom sheet.
-- `src/data/prompts.ts` — the curated prompt list (original, written for
-  this game).
+- `src/data/prompts.ts`, `src/data/spicyPrompts.ts` — the two curated
+  prompt lists (Classic and 18+ Raunchy, both original, written for this
+  game).
 - `src/data/chapters.json`, `src/data/pages.json` — per-chapter and
   per-page word lists, generated from `../build/pp_words.json` in the web
   app's repo (word identities only, no prose).

@@ -1,5 +1,6 @@
-import { GameState, Player, RoundSource, ROUND_SOURCE_MODE, DEFAULT_PAGES_PER_ROUND } from './types';
+import { GameState, Player, PromptMode, RoundSource, ROUND_SOURCE_MODE, DEFAULT_PAGES_PER_ROUND, DEFAULT_PROMPT_MODE } from './types';
 import { PROMPTS } from '../data/prompts';
+import { SPICY_PROMPTS } from '../data/spicyPrompts';
 import chaptersData from '../data/chapters.json';
 import pagesData from '../data/pages.json';
 
@@ -21,15 +22,20 @@ function shuffle<T>(arr: T[]): T[] {
   return copy;
 }
 
-function pickPrompt(used: number[]): { index: number; text: string; used: number[] } {
-  let pool = PROMPTS.map((_, i) => i).filter((i) => !used.includes(i));
+function promptPool(mode: PromptMode): string[] {
+  return mode === 'spicy' ? SPICY_PROMPTS : PROMPTS;
+}
+
+function pickPrompt(mode: PromptMode, used: number[]): { text: string; used: number[] } {
+  const prompts = promptPool(mode);
+  let pool = prompts.map((_, i) => i).filter((i) => !used.includes(i));
   let nextUsed = used;
   if (pool.length === 0) {
-    pool = PROMPTS.map((_, i) => i);
+    pool = prompts.map((_, i) => i);
     nextUsed = [];
   }
   const index = pool[Math.floor(Math.random() * pool.length)];
-  return { index, text: PROMPTS[index], used: [...nextUsed, index] };
+  return { text: prompts[index], used: [...nextUsed, index] };
 }
 
 /** Picks `count` distinct random page numbers — not necessarily adjacent. */
@@ -65,6 +71,7 @@ export const initialState: GameState = {
   phase: 'players',
   players: [],
   round: 0,
+  promptMode: DEFAULT_PROMPT_MODE,
   usedPromptIndices: [],
   currentPrompt: null,
   currentSource: null,
@@ -82,6 +89,7 @@ export type Action =
   | { type: 'ADD_PLAYER'; name: string }
   | { type: 'REMOVE_PLAYER'; id: string }
   | { type: 'SET_PAGES_PER_ROUND'; count: 1 | 2 }
+  | { type: 'SET_PROMPT_MODE'; mode: PromptMode }
   | { type: 'START_GAME' }
   | { type: 'ROLL_COMPLETE' }
   | { type: 'READY_FOR_ANSWER' }
@@ -94,7 +102,7 @@ export type Action =
   | { type: 'RESET' };
 
 function startRound(state: GameState, round: number): GameState {
-  const { text, used } = pickPrompt(state.usedPromptIndices);
+  const { text, used } = pickPrompt(state.promptMode, state.usedPromptIndices);
   const source = pickRoundSource(state.pagesPerRound);
   const turnOrder = shuffle(state.players.map((p) => p.id));
   return {
@@ -129,6 +137,11 @@ export function gameReducer(state: GameState, action: Action): GameState {
 
     case 'SET_PAGES_PER_ROUND': {
       return { ...state, pagesPerRound: action.count };
+    }
+
+    case 'SET_PROMPT_MODE': {
+      if (state.promptMode === action.mode) return state;
+      return { ...state, promptMode: action.mode, usedPromptIndices: [] };
     }
 
     case 'START_GAME': {
