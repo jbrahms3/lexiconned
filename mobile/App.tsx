@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
@@ -20,8 +20,10 @@ import {
 } from '@expo-google-fonts/ibm-plex-mono';
 
 import { GameProvider, useGame } from './src/state/GameContext';
+import { NetworkGameProvider, useNetworkGame } from './src/state/NetworkGameContext';
 import { formatSourceLabel } from './src/utils/sourceLabel';
 import { colors } from './src/theme';
+import { ModeSelectScreen } from './src/screens/ModeSelectScreen';
 import { PlayersScreen } from './src/screens/PlayersScreen';
 import { RollingScreen } from './src/screens/RollingScreen';
 import { PassDeviceScreen } from './src/screens/PassDeviceScreen';
@@ -30,10 +32,20 @@ import { RevealScreen } from './src/screens/RevealScreen';
 import { VoteScreen } from './src/screens/VoteScreen';
 import { RoundResultsScreen } from './src/screens/RoundResultsScreen';
 import { FinalScreen } from './src/screens/FinalScreen';
+import { LobbyScreen } from './src/screens/network/LobbyScreen';
+import { WaitingRoomScreen } from './src/screens/network/WaitingRoomScreen';
+import { NetworkRollingScreen } from './src/screens/network/NetworkRollingScreen';
+import { NetworkAnswerScreen } from './src/screens/network/NetworkAnswerScreen';
+import { NetworkRevealScreen } from './src/screens/network/NetworkRevealScreen';
+import { NetworkVoteScreen } from './src/screens/network/NetworkVoteScreen';
+import { NetworkResultsScreen } from './src/screens/network/NetworkResultsScreen';
+import { NetworkFinalScreen } from './src/screens/network/NetworkFinalScreen';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
-function Root() {
+type AppMode = 'select' | 'hotseat' | 'online';
+
+function HotseatRoot() {
   const { state, dispatch } = useGame();
 
   switch (state.phase) {
@@ -103,6 +115,31 @@ function Root() {
   }
 }
 
+function NetworkRoot({ onBackToSelect }: { onBackToSelect: () => void }) {
+  const { roomState } = useNetworkGame();
+
+  if (!roomState) return <LobbyScreen onBack={onBackToSelect} />;
+
+  switch (roomState.phase) {
+    case 'lobby':
+      return <WaitingRoomScreen />;
+    case 'rolling':
+      return <NetworkRollingScreen />;
+    case 'answering':
+      return <NetworkAnswerScreen />;
+    case 'reveal':
+      return <NetworkRevealScreen />;
+    case 'voting':
+      return <NetworkVoteScreen />;
+    case 'results':
+      return <NetworkResultsScreen />;
+    case 'final':
+      return <NetworkFinalScreen onLeave={onBackToSelect} />;
+    default:
+      return null;
+  }
+}
+
 export default function App() {
   const [fontsLoaded, fontError] = useFonts({
     Baloo2_500Medium,
@@ -115,6 +152,7 @@ export default function App() {
     IBMPlexMono_400Regular,
     IBMPlexMono_500Medium,
   });
+  const [mode, setMode] = useState<AppMode>('select');
 
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded || fontError) {
@@ -126,11 +164,26 @@ export default function App() {
     return null;
   }
 
+  let content: React.ReactNode;
+  if (mode === 'select') {
+    content = <ModeSelectScreen onSelectHotseat={() => setMode('hotseat')} onSelectOnline={() => setMode('online')} />;
+  } else if (mode === 'hotseat') {
+    content = (
+      <GameProvider>
+        <HotseatRoot />
+      </GameProvider>
+    );
+  } else {
+    content = (
+      <NetworkGameProvider>
+        <NetworkRoot onBackToSelect={() => setMode('select')} />
+      </NetworkGameProvider>
+    );
+  }
+
   return (
     <View style={styles.flex} onLayout={onLayoutRootView}>
-      <GameProvider>
-        <Root />
-      </GameProvider>
+      {content}
       <StatusBar style="dark" />
     </View>
   );
